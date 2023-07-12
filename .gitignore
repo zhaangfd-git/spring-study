@@ -1,0 +1,4 @@
+# Project exclude paths
+/spring-beans/target/
+/spring-core/target/
+/spring-jcl/target/
