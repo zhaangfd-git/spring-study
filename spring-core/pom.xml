@@ -30,6 +30,18 @@
             <version>3.0.2</version>
         </dependency>
 
+      <!--  <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-reflect</artifactId>
+            <version>1.9.0</version>
+        </dependency>-->
+
+        <dependency>
+            <groupId>com.trankimtung.kotlin</groupId>
+            <artifactId>kotlin-reflect</artifactId>
+            <version>0.1.0</version>
+        </dependency>
+
     </dependencies>
 
 </project>
