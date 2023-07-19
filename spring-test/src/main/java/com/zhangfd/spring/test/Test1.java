@@ -1,13 +1,19 @@
 package com.zhangfd.spring.test;
 
 import com.zhangfd.spring.BeanUtils;
+import com.zhangfd.spring.core.ResolvableType;
 import com.zhangfd.spring.factory.support.RootBeanDefinition;
 import com.zhangfd.spring.factory.support.SimpleInstantiationStrategy;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.security.AccessController;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
+import java.util.HashMap;
+import java.util.List;
 
 public class Test1 {
 
@@ -15,8 +21,8 @@ public class Test1 {
 
        // test1(String.class );
        // test2(String.class );
-        test3(String.class );
-
+       // test3(String.class );
+        test4();
     }
 
     /**
@@ -39,15 +45,16 @@ public class Test1 {
     }
 
     /**
-     * 对于cglib创建的类，通过反射，创建对象
-     * @param clazz
+     * 对于cglib创建的类，通过反射，创建对象 :CglibSubclassingInstantiationStrategy
+     * @param clazz CglibSubclassingInstantiationStrategy#instantiateWithMethodInjection(RootBeanDefinition, String, aBeanFactory)
      */
     public static   void   test2( Class<?> clazz ){
 
     }
 
     /**
-     * 把以上两种类型创建实例的过程合并到一起
+     * 把以上两种类型创建实例的过程合并到一起: SimpleInstantiationStrategy
+     * SimpleInstantiationStrategy#instantiate(RootBeanDefinition, String, BeanFactory)
      * @param clazz
      */
     public static   void   test3( Class<?> clazz ){
@@ -61,13 +68,49 @@ public class Test1 {
 
 
     /**
-     *   ResolvableType 类学习
+     *   @ ResolvableType 类学习:
      */
-    public static   void   test4(){
+    public static   void   test4() throws  Exception{
+       /* Field param = GenericClazz.class.getDeclaredField("param");
+        Type genericType = param.getGenericType();
+        ParameterizedType type = (ParameterizedType) genericType;
+        Type[] typeArguments = type.getActualTypeArguments();
+        System.out.println("从 HashMap<String, List<Integer>> 中获取 String:" + typeArguments[0]);
+        System.out.println("从 HashMap<String, List<Integer>> 中获取 List<Integer> :" + typeArguments[1]);
+        System.out.println(
+                "从 HashMap<String, List<Integer>> 中获取 List :" + ((ParameterizedType) typeArguments[1]).getRawType());
+        System.out.println("从 HashMap<String, List<Integer>> 中获取 Integer:" + ((ParameterizedType) typeArguments[1])
+                .getActualTypeArguments()[0]);
+        System.out.println("从 HashMap<String, List<Integer>> 中获取父类型:"+param.getType().getGenericSuperclass());*/
+
+        ResolvableType param = ResolvableType.forField(GenericClazz.class.getDeclaredField("param"));
+        System.out.println("从 HashMap<String, List<Integer>> 中获取 String:" + param.getGeneric(0).resolve());
+        System.out.println("从 HashMap<String, List<Integer>> 中获取 List<Integer> :" + param.getGeneric(1));
+        System.out.println(
+                "从 HashMap<String, List<Integer>> 中获取 List :" + param.getGeneric(1).resolve());
+        System.out.println("从 HashMap<String, List<Integer>> 中获取 Integer:" + param.getGeneric(1,0));
+        System.out.println("从 HashMap<String, List<Integer>> 中获取父类型:" +param.getSuperType());
+
+
+    }
+    public class GenericClazz {
+
+        private HashMap<String, List<Integer>> param;
 
     }
 
+    /**
+     * 有参数的构造方法进行实例化
+     * @param clazz
+     */
+    public static   void   test5( Class<?> clazz ){
+        RootBeanDefinition bd = new RootBeanDefinition();
+        bd.setBeanClass(clazz);
 
+        SimpleInstantiationStrategy simpleInstantiationStrategy = new SimpleInstantiationStrategy();
+        Object instantiate = simpleInstantiationStrategy.instantiate(bd,null,null);
+        System.out.println(instantiate);
+    }
 
 
 }

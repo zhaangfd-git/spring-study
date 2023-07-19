@@ -18,6 +18,8 @@ public abstract class AbstractBeanDefinition  implements BeanDefinition, Cloneab
     private MethodOverrides methodOverrides = new MethodOverrides();
 
 
+    private boolean lenientConstructorResolution = true;
+
     private int role = BeanDefinition.ROLE_APPLICATION;
 
     @Nullable
@@ -63,8 +65,8 @@ public abstract class AbstractBeanDefinition  implements BeanDefinition, Cloneab
     @Deprecated
     public static final int AUTOWIRE_AUTODETECT = AutowireCapableBeanFactory.AUTOWIRE_AUTODETECT;
 
-
-
+    //判断是否构造方法时public类型的
+    private boolean nonPublicAccessAllowed = true;
 
     /**
      * Constant that indicates no dependency check at all.
@@ -582,8 +584,19 @@ public abstract class AbstractBeanDefinition  implements BeanDefinition, Cloneab
         return this.initMethodName;
     }
 
+    public boolean isNonPublicAccessAllowed() {
+        return nonPublicAccessAllowed;
+    }
 
+    public void setNonPublicAccessAllowed(boolean nonPublicAccessAllowed) {
+        this.nonPublicAccessAllowed = nonPublicAccessAllowed;
+    }
 
+    public boolean isLenientConstructorResolution() {
+        return lenientConstructorResolution;
+    }
 
-
+    public void setLenientConstructorResolution(boolean lenientConstructorResolution) {
+        this.lenientConstructorResolution = lenientConstructorResolution;
+    }
 }

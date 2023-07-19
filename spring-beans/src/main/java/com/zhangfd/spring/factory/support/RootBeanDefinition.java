@@ -15,6 +15,16 @@ public class RootBeanDefinition  extends  AbstractBeanDefinition{
     @Nullable
     Executable resolvedConstructorOrFactoryMethod;
 
+    //是否解决了构造参数的标识符
+    boolean constructorArgumentsResolved = false;
+
+    //构造方法里具体的参数值
+    @Nullable
+    Object[] resolvedConstructorArguments;
+
+    //备用的构造方法参数值
+    @Nullable
+    Object[] preparedConstructorArguments;
 
     @Override
     public String getParentName() {
