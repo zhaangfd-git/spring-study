@@ -146,6 +146,9 @@ public abstract class AbstractBeanFactory  extends  FactoryBeanRegistrySupport i
         return ResolvableType.NONE;
     }
 
+
+
+
     protected <T> T doGetBean(
             String name, @Nullable Class<T> requiredType, @Nullable Object[] args, boolean typeCheckOnly)
             throws BeansException {
