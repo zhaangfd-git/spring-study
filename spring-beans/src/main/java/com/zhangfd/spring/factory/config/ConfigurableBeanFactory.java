@@ -1,6 +1,12 @@
 package com.zhangfd.spring.factory.config;
 
-public interface ConfigurableBeanFactory {
+import com.zhangfd.spring.factory.NoSuchBeanDefinitionException;
+import com.zhangfd.spring.factory.support.HierarchicalBeanFactory;
+import com.zhangfd.spring.lang.Nullable;
+
+import java.security.AccessControlContext;
+
+public interface ConfigurableBeanFactory  extends HierarchicalBeanFactory {
 
     /**
      * Scope identifier for the standard singleton scope: {@value}.
@@ -15,6 +21,27 @@ public interface ConfigurableBeanFactory {
      * @see #registerScope
      */
     String SCOPE_PROTOTYPE = "prototype";
+
+
+    //获取一个AccessControlContext，不能为空
+    AccessControlContext getAccessControlContext();
+
+    //获取这个工厂的类加载器
+    @Nullable
+    ClassLoader getBeanClassLoader();
+
+    //获取零时的类加载器
+    @Nullable
+    ClassLoader getTempClassLoader();
+
+    // 返回被注册bean的的scope 单例or 原型 or 其他
+    @Nullable
+    Scope getRegisteredScope(String scopeName);
+
+
+    boolean isCacheBeanMetadata();
+
+    BeanDefinition getMergedBeanDefinition(String beanName) throws NoSuchBeanDefinitionException;
 
 
 }

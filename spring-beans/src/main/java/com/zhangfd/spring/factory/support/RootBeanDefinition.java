@@ -1,9 +1,12 @@
 package com.zhangfd.spring.factory.support;
 
+import com.zhangfd.spring.core.ResolvableType;
 import com.zhangfd.spring.factory.config.BeanDefinition;
+import com.zhangfd.spring.factory.config.BeanDefinitionHolder;
 import com.zhangfd.spring.lang.Nullable;
 
 import java.lang.reflect.Executable;
+import java.lang.reflect.Method;
 
 public class RootBeanDefinition  extends  AbstractBeanDefinition{
 
@@ -26,6 +29,47 @@ public class RootBeanDefinition  extends  AbstractBeanDefinition{
     @Nullable
     Object[] preparedConstructorArguments;
 
+    // 在实例化一个类时，如有有工程方法，那这里就是记录工厂方法的变量
+    @Nullable
+    volatile Method factoryMethodToIntrospect;
+
+    //标识是否是独一无二的工厂方法
+    boolean isFactoryMethodUnique = false;
+
+    //觉得beanDefinition是否需要被合并
+    volatile boolean stale;
+
+
+    @Nullable
+    private BeanDefinitionHolder decoratedDefinition;
+
+    //这个包装的bean的类型
+    @Nullable
+    volatile Class<?> resolvedTargetType;
+
+    @Nullable
+    volatile ResolvableType targetType;
+
+     // 是否是factoryBean的bean
+    @Nullable
+    volatile Boolean isFactoryBean;
+
+    //factoryBean的返回值类型
+    @Nullable
+    volatile ResolvableType factoryMethodReturnType;
+
+    public RootBeanDefinition(RootBeanDefinition original) {
+        super(original);
+        this.decoratedDefinition = original.decoratedDefinition;
+       // this.qualifiedElement = original.qualifiedElement;
+        //this.allowCaching = original.allowCaching;
+        this.isFactoryMethodUnique = original.isFactoryMethodUnique;
+        this.targetType = original.targetType;
+        this.factoryMethodToIntrospect = original.factoryMethodToIntrospect;
+    }
+    RootBeanDefinition(BeanDefinition original) {
+        super(original);
+    }
     @Override
     public String getParentName() {
         return null;
@@ -38,6 +82,11 @@ public class RootBeanDefinition  extends  AbstractBeanDefinition{
         }
     }
 
+    @Override
+    public RootBeanDefinition cloneBeanDefinition() {
+        return new RootBeanDefinition(this);
+    }
+
 
     @Override
     public String getResourceDescription() {
@@ -48,4 +97,46 @@ public class RootBeanDefinition  extends  AbstractBeanDefinition{
     public BeanDefinition getOriginatingBeanDefinition() {
         return null;
     }
+
+
+    @Nullable
+    public Method getResolvedFactoryMethod() {
+        return this.factoryMethodToIntrospect;
+    }
+
+    public boolean isFactoryMethod(Method candidate) {
+        return candidate.getName().equals(getFactoryMethodName());
+    }
+
+
+    public void setDecoratedDefinition(@Nullable BeanDefinitionHolder decoratedDefinition) {
+        this.decoratedDefinition = decoratedDefinition;
+    }
+
+    /**
+     * Return the target definition that is being decorated by this bean definition, if any.
+     */
+    @Nullable
+    public BeanDefinitionHolder getDecoratedDefinition() {
+        return this.decoratedDefinition;
+    }
+
+    public void setTargetType(@Nullable Class<?> targetType) {
+        this.targetType = (targetType != null ? ResolvableType.forClass(targetType) : null);
+    }
+
+    /**
+     * Return the target type of this bean definition, if known
+     * (either specified in advance or resolved on first instantiation).
+     * @since 3.2.2
+     */
+    @Nullable
+    public Class<?> getTargetType() {
+        if (this.resolvedTargetType != null) {
+            return this.resolvedTargetType;
+        }
+        ResolvableType targetType = this.targetType;
+        return (targetType != null ? targetType.resolve() : null);
+    }
+
 }

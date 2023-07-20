@@ -4,10 +4,7 @@ import com.zhangfd.spring.BeanMetadataElement;
 import com.zhangfd.spring.lang.Nullable;
 import com.zhangfd.spring.util.ObjectUtils;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ConstructorArgumentValues {
 
@@ -15,6 +12,14 @@ public class ConstructorArgumentValues {
 
     private final List<ValueHolder> genericArgumentValues = new ArrayList<>();
 
+
+    public Map<Integer, ValueHolder> getIndexedArgumentValues() {
+        return Collections.unmodifiableMap(this.indexedArgumentValues);
+    }
+
+    public List<ValueHolder> getGenericArgumentValues() {
+        return Collections.unmodifiableList(this.genericArgumentValues);
+    }
 
 
     /**

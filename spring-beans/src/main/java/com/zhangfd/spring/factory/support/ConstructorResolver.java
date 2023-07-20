@@ -29,7 +29,6 @@ import com.zhangfd.spring.util.ClassUtils;
 import com.zhangfd.spring.util.ReflectionUtils;
 import com.zhangfd.spring.util.StringUtils;
 import sun.plugin.com.TypeConverter;
-import sun.rmi.runtime.Log;
 
 import java.beans.ConstructorProperties;
 import java.lang.reflect.Array;

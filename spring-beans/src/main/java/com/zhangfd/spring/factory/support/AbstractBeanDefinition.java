@@ -6,6 +6,8 @@ import com.zhangfd.spring.factory.config.AutowireCapableBeanFactory;
 import com.zhangfd.spring.factory.config.BeanDefinition;
 import com.zhangfd.spring.factory.config.ConstructorArgumentValues;
 import com.zhangfd.spring.lang.Nullable;
+import com.zhangfd.spring.util.ClassUtils;
+import com.zhangfd.spring.util.StringUtils;
 
 import java.lang.reflect.Constructor;
 
@@ -132,7 +134,58 @@ public abstract class AbstractBeanDefinition  implements BeanDefinition, Cloneab
     @Nullable
     private String destroyMethodName;
 
-
+    protected AbstractBeanDefinition(BeanDefinition original) {
+//        setParentName(original.getParentName());
+//        setBeanClassName(original.getBeanClassName());
+//        setScope(original.getScope());
+//        setAbstract(original.isAbstract());
+//        setFactoryBeanName(original.getFactoryBeanName());
+//        setFactoryMethodName(original.getFactoryMethodName());
+//        setRole(original.getRole());
+//        setSource(original.getSource());
+//        copyAttributesFrom(original);
+//
+//        if (original instanceof AbstractBeanDefinition) {
+//            AbstractBeanDefinition originalAbd = (AbstractBeanDefinition) original;
+//            if (originalAbd.hasBeanClass()) {
+//                setBeanClass(originalAbd.getBeanClass());
+//            }
+//            if (originalAbd.hasConstructorArgumentValues()) {
+//                setConstructorArgumentValues(new ConstructorArgumentValues(original.getConstructorArgumentValues()));
+//            }
+//            if (originalAbd.hasPropertyValues()) {
+//                setPropertyValues(new MutablePropertyValues(original.getPropertyValues()));
+//            }
+//            if (originalAbd.hasMethodOverrides()) {
+//                setMethodOverrides(new MethodOverrides(originalAbd.getMethodOverrides()));
+//            }
+//            Boolean lazyInit = originalAbd.getLazyInit();
+//            if (lazyInit != null) {
+//                setLazyInit(lazyInit);
+//            }
+//            setAutowireMode(originalAbd.getAutowireMode());
+//            setDependencyCheck(originalAbd.getDependencyCheck());
+//            setDependsOn(originalAbd.getDependsOn());
+//            setAutowireCandidate(originalAbd.isAutowireCandidate());
+//            setPrimary(originalAbd.isPrimary());
+//            copyQualifiersFrom(originalAbd);
+//            setInstanceSupplier(originalAbd.getInstanceSupplier());
+//            setNonPublicAccessAllowed(originalAbd.isNonPublicAccessAllowed());
+//            setLenientConstructorResolution(originalAbd.isLenientConstructorResolution());
+//            setInitMethodName(originalAbd.getInitMethodName());
+//            setEnforceInitMethod(originalAbd.isEnforceInitMethod());
+//            setDestroyMethodName(originalAbd.getDestroyMethodName());
+//            setEnforceDestroyMethod(originalAbd.isEnforceDestroyMethod());
+//            setSynthetic(originalAbd.isSynthetic());
+//            setResource(originalAbd.getResource());
+//        }
+//        else {
+//            setConstructorArgumentValues(new ConstructorArgumentValues(original.getConstructorArgumentValues()));
+//            setPropertyValues(new MutablePropertyValues(original.getPropertyValues()));
+//            setLazyInit(original.isLazyInit());
+//            setResourceDescription(original.getResourceDescription());
+//        }
+    }
 
     /**
      * Create a new AbstractBeanDefinition with default settings.
@@ -171,6 +224,70 @@ public abstract class AbstractBeanDefinition  implements BeanDefinition, Cloneab
                     "Bean class name [" + beanClassObject + "] has not been resolved into an actual Class");
         }
         return (Class<?>) beanClassObject;
+    }
+
+    public void overrideFrom(BeanDefinition other) {
+        if (StringUtils.hasLength(other.getBeanClassName())) {
+            setBeanClassName(other.getBeanClassName());
+        }
+        if (StringUtils.hasLength(other.getScope())) {
+            setScope(other.getScope());
+        }
+        setAbstract(other.isAbstract());
+        if (StringUtils.hasLength(other.getFactoryBeanName())) {
+            setFactoryBeanName(other.getFactoryBeanName());
+        }
+        if (StringUtils.hasLength(other.getFactoryMethodName())) {
+            setFactoryMethodName(other.getFactoryMethodName());
+        }
+        setRole(other.getRole());
+       // setSource(other.getSource());
+        //copyAttributesFrom(other);
+
+        if (other instanceof AbstractBeanDefinition) {
+            AbstractBeanDefinition otherAbd = (AbstractBeanDefinition) other;
+            if (otherAbd.hasBeanClass()) {
+                setBeanClass(otherAbd.getBeanClass());
+            }
+            if (otherAbd.hasConstructorArgumentValues()) {
+              //  getConstructorArgumentValues().addArgumentValues(other.getConstructorArgumentValues());
+            }
+            if (otherAbd.hasPropertyValues()) {
+               // getPropertyValues().addPropertyValues(other.getPropertyValues());
+            }
+            if (otherAbd.hasMethodOverrides()) {
+                getMethodOverrides().addOverrides(otherAbd.getMethodOverrides());
+            }
+            Boolean lazyInit = otherAbd.getLazyInit();
+            if (lazyInit != null) {
+                setLazyInit(lazyInit);
+            }
+            setAutowireMode(otherAbd.getAutowireMode());
+            setDependencyCheck(otherAbd.getDependencyCheck());
+            setDependsOn(otherAbd.getDependsOn());
+            setAutowireCandidate(otherAbd.isAutowireCandidate());
+            setPrimary(otherAbd.isPrimary());
+          //  copyQualifiersFrom(otherAbd);
+           // setInstanceSupplier(otherAbd.getInstanceSupplier());
+            setNonPublicAccessAllowed(otherAbd.isNonPublicAccessAllowed());
+            setLenientConstructorResolution(otherAbd.isLenientConstructorResolution());
+            if (otherAbd.getInitMethodName() != null) {
+                setInitMethodName(otherAbd.getInitMethodName());
+              //  setEnforceInitMethod(otherAbd.isEnforceInitMethod());
+            }
+            if (otherAbd.getDestroyMethodName() != null) {
+                setDestroyMethodName(otherAbd.getDestroyMethodName());
+               // setEnforceDestroyMethod(otherAbd.isEnforceDestroyMethod());
+            }
+            //setSynthetic(otherAbd.isSynthetic());
+           // setResource(otherAbd.getResource());
+        }
+        else {
+          //  getConstructorArgumentValues().addArgumentValues(other.getConstructorArgumentValues());
+          //  getPropertyValues().addPropertyValues(other.getPropertyValues());
+            setLazyInit(other.isLazyInit());
+          //  setResourceDescription(other.getResourceDescription());
+        }
     }
 
 
@@ -339,6 +456,19 @@ public abstract class AbstractBeanDefinition  implements BeanDefinition, Cloneab
         else {
             return this.autowireMode;
         }
+    }
+
+    public abstract AbstractBeanDefinition cloneBeanDefinition();
+
+    @Nullable
+    public Class<?> resolveBeanClass(@Nullable ClassLoader classLoader) throws ClassNotFoundException {
+        String className = getBeanClassName();
+        if (className == null) {
+            return null;
+        }
+        Class<?> resolvedClass = ClassUtils.forName(className, classLoader);
+        this.beanClass = resolvedClass;
+        return resolvedClass;
     }
 
     /**

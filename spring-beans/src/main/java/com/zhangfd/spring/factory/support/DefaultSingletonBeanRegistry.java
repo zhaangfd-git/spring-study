@@ -1,17 +1,42 @@
 package com.zhangfd.spring.factory.support;
 
+import com.zhangfd.spring.core.SimpleAliasRegistry;
+import com.zhangfd.spring.factory.ObjectFactory;
+import com.zhangfd.spring.factory.config.SingletonBeanRegistry;
 import com.zhangfd.spring.lang.Nullable;
+import com.zhangfd.spring.util.Assert;
+import com.zhangfd.spring.util.StringUtils;
 
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DefaultSingletonBeanRegistry {
+/**
+ * 单例注册器
+ */
+public class DefaultSingletonBeanRegistry  extends SimpleAliasRegistry implements SingletonBeanRegistry {
 
 
 
 
+    /** Cache of singleton objects: bean name to bean instance. */
     private final Map<String, Object> singletonObjects = new ConcurrentHashMap<>(256);
+
+    /** Cache of singleton factories: bean name to ObjectFactory. */
+    private final Map<String, ObjectFactory<?>> singletonFactories = new HashMap<>(16);
+
+    /** Cache of early singleton objects: bean name to bean instance. */
+    private final Map<String, Object> earlySingletonObjects = new ConcurrentHashMap<>(16);
+
+    /** Set of registered singletons, containing the bean names in registration order. */
+    private final Set<String> registeredSingletons = new LinkedHashSet<>(256);
+
+
+
+
+    /** Names of beans that are currently in creation. */
+    private final Set<String> singletonsCurrentlyInCreation =
+            Collections.newSetFromMap(new ConcurrentHashMap<>(16));
+
 
 
     //保存创建实例时的异常信息
@@ -42,4 +67,108 @@ public class DefaultSingletonBeanRegistry {
     public void setSuppressedExceptions(@Nullable Set<Exception> suppressedExceptions) {
         this.suppressedExceptions = suppressedExceptions;
     }
+
+
+    @Override
+    public void registerSingleton(String beanName, Object singletonObject) {
+        Assert.notNull(beanName, "Bean name must not be null");
+        Assert.notNull(singletonObject, "Singleton object must not be null");
+        synchronized (this.singletonObjects) {
+            Object oldObject = this.singletonObjects.get(beanName);
+            if (oldObject != null) {
+                throw new IllegalStateException("Could not register object [" + singletonObject +
+                        "] under bean name '" + beanName + "': there is already object [" + oldObject + "] bound");
+            }
+            addSingleton(beanName, singletonObject);
+        }
+    }
+
+    protected void addSingleton(String beanName, Object singletonObject) {
+        synchronized (this.singletonObjects) {
+            this.singletonObjects.put(beanName, singletonObject);
+            this.singletonFactories.remove(beanName);
+            this.earlySingletonObjects.remove(beanName);
+            this.registeredSingletons.add(beanName);
+        }
+    }
+
+
+    @Override
+    @Nullable
+    public Object getSingleton(String beanName) {
+        return getSingleton(beanName, true);
+    }
+
+    @Override
+    public boolean containsSingleton(String beanName) {
+        return this.singletonObjects.containsKey(beanName);
+    }
+
+    @Override
+    public String[] getSingletonNames() {
+        synchronized (this.singletonObjects) {
+            return StringUtils.toStringArray(this.registeredSingletons);
+        }
+    }
+
+    @Override
+    public int getSingletonCount() {
+        synchronized (this.singletonObjects) {
+            return this.registeredSingletons.size();
+        }
+    }
+
+    @Override
+    public Object getSingletonMutex() {
+        return this.singletonObjects;
+    }
+
+    /**
+     * Return the (raw) singleton object registered under the given name.
+     * <p>Checks already instantiated singletons and also allows for an early
+     * reference to a currently created singleton (resolving a circular reference).
+     * @param beanName the name of the bean to look for
+     * @param allowEarlyReference whether early references should be created or not
+     * @return the registered singleton object, or {@code null} if none found
+     */
+    @Nullable
+    protected Object getSingleton(String beanName, boolean allowEarlyReference) {
+        // Quick check for existing instance without full singleton lock
+        Object singletonObject = this.singletonObjects.get(beanName);
+        if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
+            singletonObject = this.earlySingletonObjects.get(beanName);
+            if (singletonObject == null && allowEarlyReference) {
+                synchronized (this.singletonObjects) {
+                    // Consistent creation of early reference within full singleton lock
+                    singletonObject = this.singletonObjects.get(beanName);
+                    if (singletonObject == null) {
+                        singletonObject = this.earlySingletonObjects.get(beanName);
+                        if (singletonObject == null) {
+                            ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
+                            if (singletonFactory != null) {
+                                singletonObject = singletonFactory.getObject();
+                                this.earlySingletonObjects.put(beanName, singletonObject);
+                                this.singletonFactories.remove(beanName);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return singletonObject;
+    }
+
+    protected boolean isActuallyInCreation(String beanName) {
+        return isSingletonCurrentlyInCreation(beanName);
+    }
+
+    /**
+     * Return whether the specified singleton bean is currently in creation
+     * (within the entire factory).
+     * @param beanName the name of the bean
+     */
+    public boolean isSingletonCurrentlyInCreation(String beanName) {
+        return this.singletonsCurrentlyInCreation.contains(beanName);
+    }
+
 }
