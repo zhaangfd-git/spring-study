@@ -8,7 +8,7 @@ import com.zhangfd.spring.lang.Nullable;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 
-public class RootBeanDefinition  extends  AbstractBeanDefinition{
+public class RootBeanDefinition  extends  AbstractBeanDefinition   {
 
 
     /** Common lock for the four constructor fields below. */

@@ -1,6 +1,11 @@
 package com.zhangfd.spring.factory.config;
 
+import com.zhangfd.spring.BeansException;
+import com.zhangfd.spring.beans.TypeConverter;
 import com.zhangfd.spring.factory.BeanFactory;
+import com.zhangfd.spring.lang.Nullable;
+
+import java.util.Set;
 
 public interface AutowireCapableBeanFactory  extends BeanFactory {
 
@@ -61,5 +66,11 @@ public interface AutowireCapableBeanFactory  extends BeanFactory {
      * @see #applyBeanPostProcessorsAfterInitialization(Object, String)
      */
     String ORIGINAL_INSTANCE_SUFFIX = ".ORIGINAL";
+
+
+    @Nullable
+    Object resolveDependency(DependencyDescriptor descriptor, @Nullable String requestingBeanName,
+                             @Nullable Set<String> autowiredBeanNames, @Nullable TypeConverter typeConverter) throws BeansException;
+
 
 }

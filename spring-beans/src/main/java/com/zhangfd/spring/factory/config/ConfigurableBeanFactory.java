@@ -1,5 +1,6 @@
 package com.zhangfd.spring.factory.config;
 
+import com.zhangfd.spring.beans.TypeConverter;
 import com.zhangfd.spring.factory.NoSuchBeanDefinitionException;
 import com.zhangfd.spring.factory.support.HierarchicalBeanFactory;
 import com.zhangfd.spring.lang.Nullable;
@@ -43,5 +44,7 @@ public interface ConfigurableBeanFactory  extends HierarchicalBeanFactory {
 
     BeanDefinition getMergedBeanDefinition(String beanName) throws NoSuchBeanDefinitionException;
 
+
+    void setTypeConverter(TypeConverter typeConverter);
 
 }

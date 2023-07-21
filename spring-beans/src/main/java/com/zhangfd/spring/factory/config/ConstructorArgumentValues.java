@@ -2,6 +2,8 @@ package com.zhangfd.spring.factory.config;
 
 import com.zhangfd.spring.BeanMetadataElement;
 import com.zhangfd.spring.lang.Nullable;
+import com.zhangfd.spring.util.Assert;
+import com.zhangfd.spring.util.ClassUtils;
 import com.zhangfd.spring.util.ObjectUtils;
 
 import java.util.*;
@@ -21,6 +23,9 @@ public class ConstructorArgumentValues {
         return Collections.unmodifiableList(this.genericArgumentValues);
     }
 
+    public int getArgumentCount() {
+        return (this.indexedArgumentValues.size() + this.genericArgumentValues.size());
+    }
 
     /**
      * Return if this holder does not contain any argument values,
@@ -31,6 +36,97 @@ public class ConstructorArgumentValues {
     }
 
 
+    public void addIndexedArgumentValue(int index, ValueHolder newValue) {
+        Assert.isTrue(index >= 0, "Index must not be negative");
+        Assert.notNull(newValue, "ValueHolder must not be null");
+        addOrMergeIndexedArgumentValue(index, newValue);
+    }
+
+    private void addOrMergeIndexedArgumentValue(Integer key, ValueHolder newValue) {
+        ValueHolder currentValue = this.indexedArgumentValues.get(key);
+        /*if (currentValue != null && newValue.getValue() instanceof Mergeable) {
+            Mergeable mergeable = (Mergeable) newValue.getValue();
+            if (mergeable.isMergeEnabled()) {
+                newValue.setValue(mergeable.merge(currentValue.getValue()));
+            }
+        }*/
+        this.indexedArgumentValues.put(key, newValue);
+    }
+
+    public void addGenericArgumentValue(ValueHolder newValue) {
+        Assert.notNull(newValue, "ValueHolder must not be null");
+        if (!this.genericArgumentValues.contains(newValue)) {
+            addOrMergeGenericArgumentValue(newValue);
+        }
+    }
+
+    private void addOrMergeGenericArgumentValue(ValueHolder newValue) {
+        if (newValue.getName() != null) {
+            for (Iterator<ValueHolder> it = this.genericArgumentValues.iterator(); it.hasNext();) {
+                ValueHolder currentValue = it.next();
+               /* if (newValue.getName().equals(currentValue.getName())) {
+                    if (newValue.getValue() instanceof Mergeable) {
+                        Mergeable mergeable = (Mergeable) newValue.getValue();
+                        if (mergeable.isMergeEnabled()) {
+                            newValue.setValue(mergeable.merge(currentValue.getValue()));
+                        }
+                    }
+                    it.remove();
+                }*/
+            }
+        }
+        this.genericArgumentValues.add(newValue);
+    }
+
+
+    @Nullable
+    public ValueHolder getArgumentValue(int index, @Nullable Class<?> requiredType, @Nullable String requiredName, @Nullable Set<ValueHolder> usedValueHolders) {
+        Assert.isTrue(index >= 0, "Index must not be negative");
+        ValueHolder valueHolder = getIndexedArgumentValue(index, requiredType, requiredName);
+        if (valueHolder == null) {
+            valueHolder = getGenericArgumentValue(requiredType, requiredName, usedValueHolders);
+        }
+        return valueHolder;
+    }
+
+    @Nullable
+    public ValueHolder getIndexedArgumentValue(int index, @Nullable Class<?> requiredType, @Nullable String requiredName) {
+        Assert.isTrue(index >= 0, "Index must not be negative");
+        ValueHolder valueHolder = this.indexedArgumentValues.get(index);
+        if (valueHolder != null &&
+                (valueHolder.getType() == null || (requiredType != null &&
+                        ClassUtils.matchesTypeName(requiredType, valueHolder.getType()))) &&
+                (valueHolder.getName() == null || (requiredName != null &&
+                        (requiredName.isEmpty() || requiredName.equals(valueHolder.getName()))))) {
+            return valueHolder;
+        }
+        return null;
+    }
+
+    @Nullable
+    public ValueHolder getGenericArgumentValue(@Nullable Class<?> requiredType, @Nullable String requiredName,
+                                               @Nullable Set<ValueHolder> usedValueHolders) {
+
+        for (ValueHolder valueHolder : this.genericArgumentValues) {
+            if (usedValueHolders != null && usedValueHolders.contains(valueHolder)) {
+                continue;
+            }
+            if (valueHolder.getName() != null && (requiredName == null ||
+                    (!requiredName.isEmpty() && !requiredName.equals(valueHolder.getName())))) {
+                continue;
+            }
+            if (valueHolder.getType() != null && (requiredType == null ||
+                    !ClassUtils.matchesTypeName(requiredType, valueHolder.getType()))) {
+                continue;
+            }
+            if (requiredType != null && valueHolder.getType() == null && valueHolder.getName() == null &&
+                    !ClassUtils.isAssignableValue(requiredType, valueHolder.getValue())) {
+                continue;
+            }
+            return valueHolder;
+        }
+        return null;
+    }
     /**
      * Holder for a constructor argument value, with an optional type
      * attribute indicating the target type of the actual constructor argument.

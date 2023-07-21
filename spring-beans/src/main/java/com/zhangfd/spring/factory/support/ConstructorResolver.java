@@ -17,19 +17,21 @@
 package com.zhangfd.spring.factory.support;
 
 import com.zhangfd.spring.*;
+import com.zhangfd.spring.beans.BeanDefinitionValueResolver;
+import com.zhangfd.spring.core.CollectionFactory;
 import com.zhangfd.spring.core.MethodParameter;
 import com.zhangfd.spring.core.NamedThreadLocal;
 import com.zhangfd.spring.core.ParameterNameDiscoverer;
+import com.zhangfd.spring.factory.BeanDefinitionStoreException;
 import com.zhangfd.spring.factory.InjectionPoint;
+import com.zhangfd.spring.factory.NoSuchBeanDefinitionException;
+import com.zhangfd.spring.factory.NoUniqueBeanDefinitionException;
 import com.zhangfd.spring.factory.config.AutowireCapableBeanFactory;
 import com.zhangfd.spring.factory.config.ConstructorArgumentValues;
+import com.zhangfd.spring.factory.config.DependencyDescriptor;
 import com.zhangfd.spring.lang.Nullable;
-import com.zhangfd.spring.util.Assert;
-import com.zhangfd.spring.util.ClassUtils;
-import com.zhangfd.spring.util.ReflectionUtils;
-import com.zhangfd.spring.util.StringUtils;
-import sun.plugin.com.TypeConverter;
-
+import com.zhangfd.spring.util.*;
+import com.zhangfd.spring.beans.TypeConverter;
 import java.beans.ConstructorProperties;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -82,7 +84,7 @@ class ConstructorResolver {
 
 	private final AbstractAutowireCapableBeanFactory beanFactory;
 
-	private final Log logger;
+	//private final Log logger;
 
 
 	/**
@@ -91,7 +93,7 @@ class ConstructorResolver {
 	 */
 	public ConstructorResolver(AbstractAutowireCapableBeanFactory beanFactory) {
 		this.beanFactory = beanFactory;
-		this.logger = beanFactory.getLogger();
+		//this.logger = beanFactory.getLogger();
 	}
 
 
@@ -212,9 +214,9 @@ class ConstructorResolver {
 								getUserDeclaredConstructor(candidate), autowiring, candidates.length == 1);
 					}
 					catch (UnsatisfiedDependencyException ex) {
-						if (logger.isTraceEnabled()) {
+					/*	if (logger.isTraceEnabled()) {
 							logger.trace("Ignoring constructor [" + candidate + "] of bean '" + beanName + "': " + ex);
-						}
+						}*/
 						// Swallow and try next constructor.
 						if (causes == null) {
 							causes = new LinkedList<>();
@@ -391,7 +393,8 @@ class ConstructorResolver {
 			}
 			factoryBean = this.beanFactory.getBean(factoryBeanName);
 			if (mbd.isSingleton() && this.beanFactory.containsSingleton(beanName)) {
-				throw new ImplicitlyAppearedSingletonException();
+				throw new BeanDefinitionStoreException("test");
+				//throw new ImplicitlyAppearedSingletonException();
 			}
 			this.beanFactory.registerDependentBean(factoryBeanName, beanName);
 			factoryClass = factoryBean.getClass();
@@ -524,9 +527,9 @@ class ConstructorResolver {
 									paramTypes, paramNames, candidate, autowiring, candidates.size() == 1);
 						}
 						catch (UnsatisfiedDependencyException ex) {
-							if (logger.isTraceEnabled()) {
+							/*if (logger.isTraceEnabled()) {
 								logger.trace("Ignoring factory method [" + candidate + "] of bean '" + beanName + "': " + ex);
-							}
+							}*/
 							// Swallow and try next overloaded factory method.
 							if (causes == null) {
 								causes = new LinkedList<>();
@@ -742,7 +745,7 @@ class ConstructorResolver {
 					try {
 						convertedValue = converter.convertIfNecessary(originalValue, paramType, methodParam);
 					}
-					catch (TypeMismatchException ex) {
+					catch (Exception ex) {
 						throw new UnsatisfiedDependencyException(
 								mbd.getResourceDescription(), beanName, new InjectionPoint(methodParam),
 								"Could not convert argument value of type [" +
@@ -786,11 +789,11 @@ class ConstructorResolver {
 
 		for (String autowiredBeanName : autowiredBeanNames) {
 			this.beanFactory.registerDependentBean(autowiredBeanName, beanName);
-			if (logger.isDebugEnabled()) {
+			/*if (logger.isDebugEnabled()) {
 				logger.debug("Autowiring by type from bean name '" + beanName +
 						"' via " + (executable instanceof Constructor ? "constructor" : "factory method") +
 						" to bean named '" + autowiredBeanName + "'");
-			}
+			}*/
 		}
 
 		return args;
@@ -825,7 +828,7 @@ class ConstructorResolver {
 			try {
 				resolvedArgs[argIndex] = converter.convertIfNecessary(argValue, paramType, methodParam);
 			}
-			catch (TypeMismatchException ex) {
+			catch (Exception ex) {
 				throw new UnsatisfiedDependencyException(
 						mbd.getResourceDescription(), beanName, new InjectionPoint(methodParam),
 						"Could not convert argument value of type [" + ObjectUtils.nullSafeClassName(argValue) +

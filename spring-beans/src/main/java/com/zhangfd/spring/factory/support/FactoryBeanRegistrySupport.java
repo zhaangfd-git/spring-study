@@ -1,7 +1,9 @@
 package com.zhangfd.spring.factory.support;
 
+import com.zhangfd.spring.factory.FactoryBean;
 import com.zhangfd.spring.lang.Nullable;
 
+import java.security.AccessControlContext;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Map;
@@ -14,7 +16,7 @@ public abstract  class FactoryBeanRegistrySupport extends  DefaultSingletonBeanR
 
     private final Map<String, Object> factoryBeanObjectCache = new ConcurrentHashMap<>(16);
 
-/*
+
     @Nullable
     protected Class<?> getTypeForFactoryBean(FactoryBean<?> factoryBean) {
         try {
@@ -28,9 +30,13 @@ public abstract  class FactoryBeanRegistrySupport extends  DefaultSingletonBeanR
         }
         catch (Throwable ex) {
             // Thrown from the FactoryBean's getObjectType implementation.
-            logger.info("FactoryBean threw exception from getObjectType, despite the contract saying " +
+          /*  logger.info("FactoryBean threw exception from getObjectType, despite the contract saying " +
                     "that it should return null if the type of its object cannot be determined yet", ex);
-            return null;
+           */ return null;
         }
-    }*/
+    }
+
+    protected AccessControlContext getAccessControlContext() {
+        return AccessController.getContext();
+    }
 }

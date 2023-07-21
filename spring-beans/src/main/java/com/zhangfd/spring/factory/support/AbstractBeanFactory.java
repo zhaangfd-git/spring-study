@@ -2,6 +2,7 @@ package com.zhangfd.spring.factory.support;
 
 import com.zhangfd.spring.BeanWrapper;
 import com.zhangfd.spring.BeansException;
+import com.zhangfd.spring.beans.TypeConverter;
 import com.zhangfd.spring.core.AttributeAccessor;
 import com.zhangfd.spring.core.DecoratingClassLoader;
 import com.zhangfd.spring.core.ResolvableType;
@@ -13,10 +14,7 @@ import com.zhangfd.spring.util.ClassUtils;
 import com.zhangfd.spring.util.ObjectUtils;
 import com.zhangfd.spring.util.StringUtils;
 
-import java.security.AccessControlContext;
-import java.security.AccessController;
-import java.security.PrivilegedActionException;
-import java.security.PrivilegedExceptionAction;
+import java.security.*;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -49,6 +47,9 @@ public abstract class AbstractBeanFactory  extends  FactoryBeanRegistrySupport i
         registerCustomEditors(bw);*/
     }
 
+    //容器定义的类型转换器
+    @Nullable
+    private TypeConverter typeConverter;
 
     @Override
     public AccessControlContext getAccessControlContext() {
@@ -119,7 +120,7 @@ public abstract class AbstractBeanFactory  extends  FactoryBeanRegistrySupport i
     }
 
     protected ResolvableType getTypeForFactoryBean(String beanName, RootBeanDefinition mbd, boolean allowInit) {
-        ResolvableType result = getTypeForFactoryBeanFromAttributes(mbd);
+        ResolvableType result = getTypeForFactoryBeanFromAttributes((AttributeAccessor) mbd);
         if (result != ResolvableType.NONE) {
             return result;
         }
@@ -131,7 +132,7 @@ public abstract class AbstractBeanFactory  extends  FactoryBeanRegistrySupport i
                 return (objectType != null ? ResolvableType.forClass(objectType) : ResolvableType.NONE);
             }
             catch (BeanCreationException ex) {
-                if (ex.contains(BeanCurrentlyInCreationException.class)) {
+               /* if (ex.contains(BeanCurrentlyInCreationException.class)) {
                     logger.trace(LogMessage.format("Bean currently in creation on FactoryBean type check: %s", ex));
                 }
                 else if (mbd.isLazyInit()) {
@@ -139,7 +140,7 @@ public abstract class AbstractBeanFactory  extends  FactoryBeanRegistrySupport i
                 }
                 else {
                     logger.debug(LogMessage.format("Bean creation exception on eager FactoryBean type check: %s", ex));
-                }
+                }*/
                 onSuppressedException(ex);
             }
         }
@@ -349,11 +350,24 @@ public abstract class AbstractBeanFactory  extends  FactoryBeanRegistrySupport i
         }
         return resolveBeanClass(mbd, beanName, typesToMatch);
     }
+    @Override
+    public void setTypeConverter(TypeConverter typeConverter) {
+        this.typeConverter = typeConverter;
+    }
+
+    /**
+     * Return the custom TypeConverter to use, if any.
+     * @return the custom TypeConverter, or {@code null} if none specified
+     */
+    @Nullable
+    protected TypeConverter getCustomTypeConverter() {
+        return this.typeConverter;
+    }
 
 
     @Nullable
     protected Class<?> resolveBeanClass(RootBeanDefinition mbd, String beanName, Class<?>... typesToMatch)
-            throws CannotLoadBeanClassException {
+             {
 
         try {
             if (mbd.hasBeanClass()) {
@@ -368,15 +382,17 @@ public abstract class AbstractBeanFactory  extends  FactoryBeanRegistrySupport i
             }
         }
         catch (PrivilegedActionException pae) {
-            ClassNotFoundException ex = (ClassNotFoundException) pae.getException();
+          /*  ClassNotFoundException ex = (ClassNotFoundException) pae.getException();
             throw new CannotLoadBeanClassException(mbd.getResourceDescription(), beanName, mbd.getBeanClassName(), ex);
-        }
+        */}
         catch (ClassNotFoundException ex) {
-            throw new CannotLoadBeanClassException(mbd.getResourceDescription(), beanName, mbd.getBeanClassName(), ex);
+         //   throw new CannotLoadBeanClassException(mbd.getResourceDescription(), beanName, mbd.getBeanClassName(), ex);
         }
         catch (LinkageError err) {
-            throw new CannotLoadBeanClassException(mbd.getResourceDescription(), beanName, mbd.getBeanClassName(), err);
+            //throw new CannotLoadBeanClassException(mbd.getResourceDescription(), beanName, mbd.getBeanClassName(), err);
         }
+
+        return null;
     }
 
     @Nullable
@@ -427,9 +443,9 @@ public abstract class AbstractBeanFactory  extends  FactoryBeanRegistrySupport i
                         return dynamicLoader.loadClass(className);
                     }
                     catch (ClassNotFoundException ex) {
-                        if (logger.isTraceEnabled()) {
+                     /*   if (logger.isTraceEnabled()) {
                             logger.trace("Could not load class [" + className + "] from " + dynamicLoader + ": " + ex);
-                        }
+                        }*/
                     }
                 }
                 return ClassUtils.forName(className, dynamicLoader);

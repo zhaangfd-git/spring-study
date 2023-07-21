@@ -30,12 +30,15 @@ public class DefaultSingletonBeanRegistry  extends SimpleAliasRegistry implement
     /** Set of registered singletons, containing the bean names in registration order. */
     private final Set<String> registeredSingletons = new LinkedHashSet<>(256);
 
+    private final Map<String, Set<String>> dependentBeanMap = new ConcurrentHashMap<>(64);
 
+    private final Map<String, Set<String>> dependenciesForBeanMap = new ConcurrentHashMap<>(64);
 
 
     /** Names of beans that are currently in creation. */
     private final Set<String> singletonsCurrentlyInCreation =
             Collections.newSetFromMap(new ConcurrentHashMap<>(16));
+
 
 
 
@@ -171,4 +174,22 @@ public class DefaultSingletonBeanRegistry  extends SimpleAliasRegistry implement
         return this.singletonsCurrentlyInCreation.contains(beanName);
     }
 
+
+    public void registerDependentBean(String beanName, String dependentBeanName) {
+        String canonicalName = canonicalName(beanName);
+
+        synchronized (this.dependentBeanMap) {
+            Set<String> dependentBeans =
+                    this.dependentBeanMap.computeIfAbsent(canonicalName, k -> new LinkedHashSet<>(8));
+            if (!dependentBeans.add(dependentBeanName)) {
+                return;
+            }
+        }
+
+        synchronized (this.dependenciesForBeanMap) {
+            Set<String> dependenciesForBean =
+                    this.dependenciesForBeanMap.computeIfAbsent(dependentBeanName, k -> new LinkedHashSet<>(8));
+            dependenciesForBean.add(canonicalName);
+        }
+    }
 }

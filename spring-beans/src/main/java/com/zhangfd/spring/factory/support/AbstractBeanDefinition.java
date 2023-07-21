@@ -1,6 +1,7 @@
 package com.zhangfd.spring.factory.support;
 
 import com.zhangfd.spring.MutablePropertyValues;
+import com.zhangfd.spring.beans.BeanMetadataAttributeAccessor;
 import com.zhangfd.spring.core.ResolvableType;
 import com.zhangfd.spring.factory.config.AutowireCapableBeanFactory;
 import com.zhangfd.spring.factory.config.BeanDefinition;
@@ -11,7 +12,7 @@ import com.zhangfd.spring.util.StringUtils;
 
 import java.lang.reflect.Constructor;
 
-public abstract class AbstractBeanDefinition  implements BeanDefinition, Cloneable{
+public abstract class AbstractBeanDefinition   extends BeanMetadataAttributeAccessor implements BeanDefinition, Cloneable{
 
     @Nullable
     private volatile Object beanClass;
