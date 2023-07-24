@@ -1,5 +1,6 @@
-package com.zhangfd.spring;
+package com.zhangfd.spring.exception;
 
+import com.zhangfd.spring.BeansException;
 import com.zhangfd.spring.factory.InjectionPoint;
 import com.zhangfd.spring.lang.Nullable;
 import com.zhangfd.spring.util.StringUtils;

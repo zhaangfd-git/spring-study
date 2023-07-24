@@ -16,17 +16,11 @@
 
 package com.zhangfd.spring.beans;
 
-import com.zhangfd.spring.BeanWrapper;
-import com.zhangfd.spring.BeansException;
 import com.zhangfd.spring.factory.*;
 import com.zhangfd.spring.factory.config.BeanDefinition;
-import com.zhangfd.spring.factory.config.BeanDefinitionHolder;
-import com.zhangfd.spring.factory.config.ConstructorArgumentValues;
 import com.zhangfd.spring.factory.config.TypedStringValue;
 import com.zhangfd.spring.factory.support.AbstractAutowireCapableBeanFactory;
-import com.zhangfd.spring.factory.support.RootBeanDefinition;
 import com.zhangfd.spring.lang.Nullable;
-import com.zhangfd.spring.util.Assert;
 import com.zhangfd.spring.util.ObjectUtils;
 
 import java.lang.reflect.Array;
@@ -35,7 +29,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 

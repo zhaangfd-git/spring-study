@@ -16,6 +16,8 @@
 
 package com.zhangfd.spring;
 
+import com.zhangfd.spring.exception.InvalidPropertyException;
+
 import java.beans.PropertyDescriptor;
 
 /**

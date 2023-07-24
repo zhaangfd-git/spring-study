@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package com.zhangfd.spring;
+package com.zhangfd.spring.exception;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
+import com.zhangfd.spring.FatalBeanException;
 import com.zhangfd.spring.lang.Nullable;
 
 /**

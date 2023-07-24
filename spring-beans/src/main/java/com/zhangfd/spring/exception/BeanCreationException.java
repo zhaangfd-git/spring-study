@@ -1,5 +1,6 @@
-package com.zhangfd.spring;
+package com.zhangfd.spring.exception;
 
+import com.zhangfd.spring.FatalBeanException;
 import com.zhangfd.spring.core.NestedRuntimeException;
 import com.zhangfd.spring.lang.Nullable;
 

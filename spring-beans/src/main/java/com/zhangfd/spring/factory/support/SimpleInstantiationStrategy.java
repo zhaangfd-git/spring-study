@@ -1,6 +1,6 @@
 package com.zhangfd.spring.factory.support;
 
-import com.zhangfd.spring.BeanInstantiationException;
+import com.zhangfd.spring.exception.BeanInstantiationException;
 import com.zhangfd.spring.BeanUtils;
 import com.zhangfd.spring.BeansException;
 import com.zhangfd.spring.factory.BeanFactory;

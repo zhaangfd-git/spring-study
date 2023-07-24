@@ -1,6 +1,7 @@
 package com.zhangfd.spring;
 
 import com.zhangfd.spring.core.convert.ConversionService;
+import com.zhangfd.spring.exception.InvalidPropertyException;
 import com.zhangfd.spring.lang.Nullable;
 
 import java.beans.PropertyDescriptor;
