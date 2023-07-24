@@ -21,6 +21,7 @@ import com.zhangfd.spring.util.ClassUtils;
 import com.zhangfd.spring.util.ConcurrentReferenceHashMap;
 import com.zhangfd.spring.util.ReflectionUtils;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -31,9 +32,8 @@ import java.util.Map;
 
 
 /**
- * Helper for resolving synthetic {@link Method#isBridge bridge Methods} to the
- * {@link Method} being bridged.
- *
+ *  桥接方法--原方法的帮助类
+ * (桥接方法---jdk1.5随着泛型的出现，为了向前兼容，在编译成字节码的时候，自动对泛型方法生成一个对应的桥接方法)
  * <p>Given a synthetic {@link Method#isBridge bridge Method} returns the {@link Method}
  * being bridged. A bridge method may be created by the compiler when extending a
  * parameterized type whose methods have parameterized arguments. During runtime
@@ -58,13 +58,7 @@ public final class BridgeMethodResolver {
 
 
 	/**
-	 * Find the original method for the supplied {@link Method bridge Method}.
-	 * <p>It is safe to call this method passing in a non-bridge {@link Method} instance.
-	 * In such a case, the supplied {@link Method} instance is returned directly to the caller.
-	 * Callers are <strong>not</strong> required to check for bridging before calling this method.
-	 * @param bridgeMethod the method to introspect
-	 * @return the original method (either the bridged method or the passed-in method
-	 * if no more specific one could be found)
+	 * 给定一个方法，找到它的桥接方法
 	 */
 	public static Method findBridgedMethod(Method bridgeMethod) {
 		if (!bridgeMethod.isBridge()) {
@@ -90,6 +84,14 @@ public final class BridgeMethodResolver {
 			cache.put(bridgeMethod, bridgedMethod);
 		}
 		return bridgedMethod;
+	}
+
+
+	public static void main(String[] args) {
+		Method[] declaredFields = String.class.getDeclaredMethods();
+		Method source = (Method) declaredFields[0];
+		Method bridgedMethod = BridgeMethodResolver.findBridgedMethod(source);
+		System.out.println(11111111);
 	}
 
 	/**

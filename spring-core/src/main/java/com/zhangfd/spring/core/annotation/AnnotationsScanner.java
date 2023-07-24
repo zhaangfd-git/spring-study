@@ -444,6 +444,13 @@ abstract class AnnotationsScanner {
 		return null;
 	}
 
+	/**
+	 * 获取指定元素source(方法、类)上的所有注解，
+	 * 这里spring做了特殊处理， 当注解在“java.lang", "org.springframework.lang“包下全部过被滤掉
+	 * @param source
+	 * @param defensive
+	 * @return
+	 */
 	static Annotation[] getDeclaredAnnotations(AnnotatedElement source, boolean defensive) {
 		boolean cached = false;
 		Annotation[] annotations = declaredAnnotationCache.get(source);
@@ -476,6 +483,18 @@ abstract class AnnotationsScanner {
 		}
 		return annotations.clone();
 	}
+
+	public static void main(String[] args) {
+        //返回类上所以注解
+		Annotation[] declaredAnnotations = TestAnnotation.class.getDeclaredAnnotations();
+        System.out.println(declaredAnnotations.length);
+		Annotation[] declaredAnnotations1 = getDeclaredAnnotations(TestAnnotation.class, false);
+		System.out.println(declaredAnnotations1.length);
+
+	}
+
+
+
 
 	private static boolean isIgnorable(Class<?> annotationType) {
 		return AnnotationFilter.PLAIN.matches(annotationType);

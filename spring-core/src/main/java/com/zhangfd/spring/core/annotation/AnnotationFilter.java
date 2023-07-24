@@ -40,7 +40,7 @@ public interface AnnotationFilter {
 	 * and their subpackages.
 	 * <p>This is the default filter in the {@link MergedAnnotations} model.
 	 */
-	AnnotationFilter PLAIN = packages("java.lang", "org.springframework.lang");
+	AnnotationFilter PLAIN = packages("java.lang", "org.springframework.lang","com.zhangfd.spring.core");
 
 	/**
 	 * {@link AnnotationFilter} that matches annotations in the
