@@ -2,6 +2,9 @@ package com.zhangfd.spring.factory;
 
 import com.zhangfd.spring.BeansException;
 import com.zhangfd.spring.core.ResolvableType;
+import com.zhangfd.spring.exception.BeanDefinitionStoreException;
+import com.zhangfd.spring.exception.NoSuchBeanDefinitionException;
+import com.zhangfd.spring.exception.NoUniqueBeanDefinitionException;
 import com.zhangfd.spring.lang.Nullable;
 
 public interface BeanFactory {

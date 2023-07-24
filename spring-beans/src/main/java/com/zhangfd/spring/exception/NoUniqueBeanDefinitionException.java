@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package com.zhangfd.spring.factory;
+package com.zhangfd.spring.exception;
 
 import com.zhangfd.spring.core.ResolvableType;
+import com.zhangfd.spring.exception.NoSuchBeanDefinitionException;
+import com.zhangfd.spring.factory.BeanFactory;
 import com.zhangfd.spring.lang.Nullable;
 import com.zhangfd.spring.util.StringUtils;
 

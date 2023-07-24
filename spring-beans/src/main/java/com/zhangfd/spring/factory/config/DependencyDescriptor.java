@@ -34,7 +34,7 @@ import com.zhangfd.spring.core.ResolvableType;
 import com.zhangfd.spring.core.convert.TypeDescriptor;
 import com.zhangfd.spring.factory.BeanFactory;
 import com.zhangfd.spring.factory.InjectionPoint;
-import com.zhangfd.spring.factory.NoUniqueBeanDefinitionException;
+import com.zhangfd.spring.exception.NoUniqueBeanDefinitionException;
 import com.zhangfd.spring.lang.Nullable;
 import com.zhangfd.spring.util.ObjectUtils;
 import kotlin.reflect.KProperty;

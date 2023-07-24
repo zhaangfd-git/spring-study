@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.zhangfd.spring.factory;
+package com.zhangfd.spring.exception;
 
 import com.zhangfd.spring.FatalBeanException;
 import com.zhangfd.spring.lang.Nullable;

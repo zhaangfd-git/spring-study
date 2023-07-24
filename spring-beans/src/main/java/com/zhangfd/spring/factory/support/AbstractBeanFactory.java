@@ -6,6 +6,8 @@ import com.zhangfd.spring.beans.TypeConverter;
 import com.zhangfd.spring.core.AttributeAccessor;
 import com.zhangfd.spring.core.DecoratingClassLoader;
 import com.zhangfd.spring.core.ResolvableType;
+import com.zhangfd.spring.exception.BeanDefinitionStoreException;
+import com.zhangfd.spring.exception.NoSuchBeanDefinitionException;
 import com.zhangfd.spring.factory.*;
 import com.zhangfd.spring.factory.config.*;
 import com.zhangfd.spring.lang.Nullable;
