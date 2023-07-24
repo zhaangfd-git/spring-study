@@ -17,6 +17,7 @@
 package com.zhangfd.spring.core.annotation;
 
 import com.zhangfd.spring.lang.Nullable;
+import com.zhangfd.spring.util.MultiValueMap;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
@@ -498,7 +499,7 @@ public abstract class AnnotatedElementUtils {
 	public static MultiValueMap<String, Object> getAllAnnotationAttributes(AnnotatedElement element,
 			String annotationName, final boolean classValuesAsString, final boolean nestedAnnotationsAsMap) {
 
-		Adapt[] adaptations = Adapt.values(classValuesAsString, nestedAnnotationsAsMap);
+		MergedAnnotation.Adapt[] adaptations = MergedAnnotation.Adapt.values(classValuesAsString, nestedAnnotationsAsMap);
 		return getAnnotations(element).stream(annotationName)
 				.filter(MergedAnnotationPredicates.unique(MergedAnnotation::getMetaTypes))
 				.map(MergedAnnotation::withNonMergedAttributes)
@@ -748,25 +749,25 @@ public abstract class AnnotatedElementUtils {
 	}
 
 	private static MergedAnnotations getAnnotations(AnnotatedElement element) {
-		return MergedAnnotations.from(element, SearchStrategy.INHERITED_ANNOTATIONS, RepeatableContainers.none());
+		return MergedAnnotations.from(element, MergedAnnotations.SearchStrategy.INHERITED_ANNOTATIONS, RepeatableContainers.none());
 	}
 
 	private static MergedAnnotations getRepeatableAnnotations(AnnotatedElement element,
 			@Nullable Class<? extends Annotation> containerType, Class<? extends Annotation> annotationType) {
 
 		RepeatableContainers repeatableContainers = RepeatableContainers.of(annotationType, containerType);
-		return MergedAnnotations.from(element, SearchStrategy.INHERITED_ANNOTATIONS, repeatableContainers);
+		return MergedAnnotations.from(element, MergedAnnotations.SearchStrategy.INHERITED_ANNOTATIONS, repeatableContainers);
 	}
 
 	private static MergedAnnotations findAnnotations(AnnotatedElement element) {
-		return MergedAnnotations.from(element, SearchStrategy.TYPE_HIERARCHY, RepeatableContainers.none());
+		return MergedAnnotations.from(element, MergedAnnotations.SearchStrategy.TYPE_HIERARCHY, RepeatableContainers.none());
 	}
 
 	private static MergedAnnotations findRepeatableAnnotations(AnnotatedElement element,
 			@Nullable Class<? extends Annotation> containerType, Class<? extends Annotation> annotationType) {
 
 		RepeatableContainers repeatableContainers = RepeatableContainers.of(annotationType, containerType);
-		return MergedAnnotations.from(element, SearchStrategy.TYPE_HIERARCHY, repeatableContainers);
+		return MergedAnnotations.from(element, MergedAnnotations.SearchStrategy.TYPE_HIERARCHY, repeatableContainers);
 	}
 
 	@Nullable
@@ -787,7 +788,7 @@ public abstract class AnnotatedElementUtils {
 			return null;
 		}
 		return annotation.asAnnotationAttributes(
-				Adapt.values(classValuesAsString, nestedAnnotationsAsMap));
+				MergedAnnotation.Adapt.values(classValuesAsString, nestedAnnotationsAsMap));
 	}
 
 

@@ -1,10 +1,13 @@
 package com.zhangfd.spring;
 
+import com.zhangfd.spring.core.MethodParameter;
 import com.zhangfd.spring.core.convert.ConversionService;
+import com.zhangfd.spring.core.convert.TypeDescriptor;
 import com.zhangfd.spring.exception.InvalidPropertyException;
 import com.zhangfd.spring.lang.Nullable;
 
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
 
 public class BeanWrapperImpl  implements  BeanWrapper{
 
@@ -92,5 +95,25 @@ public class BeanWrapperImpl  implements  BeanWrapper{
     @Override
     public boolean isAutoGrowNestedPaths() {
         return false;
+    }
+
+    @Override
+    public <T> T convertIfNecessary(Object value, Class<T> requiredType) {
+        return null;
+    }
+
+    @Override
+    public <T> T convertIfNecessary(Object value, Class<T> requiredType, MethodParameter methodParam) {
+        return null;
+    }
+
+    @Override
+    public <T> T convertIfNecessary(Object value, Class<T> requiredType, Field field) {
+        return null;
+    }
+
+    @Override
+    public <T> T convertIfNecessary(Object value, Class<T> requiredType, TypeDescriptor typeDescriptor) {
+        return null;
     }
 }

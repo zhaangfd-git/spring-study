@@ -24,11 +24,13 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.zhangfd.spring.core.BridgeMethodResolver;
+import com.zhangfd.spring.core.Ordered;
+import com.zhangfd.spring.core.ResolvableType;
 import com.zhangfd.spring.lang.Nullable;
 import com.zhangfd.spring.util.ConcurrentReferenceHashMap;
-import org.springframework.core.BridgeMethodResolver;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.MergedAnnotations.SearchStrategy;
+import com.zhangfd.spring.util.ObjectUtils;
+import com.zhangfd.spring.util.ReflectionUtils;
 
 
 /**
@@ -69,7 +71,7 @@ abstract class AnnotationsScanner {
 	 * @return the result of {@link AnnotationsProcessor#finish(Object)}
 	 */
 	@Nullable
-	static <C, R> R scan(C context, AnnotatedElement source, SearchStrategy searchStrategy,
+	static <C, R> R scan(C context, AnnotatedElement source, MergedAnnotations.SearchStrategy searchStrategy,
 			AnnotationsProcessor<C, R> processor) {
 
 		R result = process(context, source, searchStrategy, processor);
@@ -78,7 +80,7 @@ abstract class AnnotationsScanner {
 
 	@Nullable
 	private static <C, R> R process(C context, AnnotatedElement source,
-			SearchStrategy searchStrategy, AnnotationsProcessor<C, R> processor) {
+									MergedAnnotations.SearchStrategy searchStrategy, AnnotationsProcessor<C, R> processor) {
 
 		if (source instanceof Class) {
 			return processClass(context, (Class<?>) source, searchStrategy, processor);
@@ -91,7 +93,7 @@ abstract class AnnotationsScanner {
 
 	@Nullable
 	private static <C, R> R processClass(C context, Class<?> source,
-			SearchStrategy searchStrategy, AnnotationsProcessor<C, R> processor) {
+										 MergedAnnotations.SearchStrategy searchStrategy, AnnotationsProcessor<C, R> processor) {
 
 		switch (searchStrategy) {
 			case DIRECT:
@@ -110,7 +112,7 @@ abstract class AnnotationsScanner {
 
 	@Nullable
 	private static <C, R> R processClassInheritedAnnotations(C context, Class<?> source,
-			SearchStrategy searchStrategy, AnnotationsProcessor<C, R> processor) {
+															 MergedAnnotations.SearchStrategy searchStrategy, AnnotationsProcessor<C, R> processor) {
 
 		try {
 			if (isWithoutHierarchy(source, searchStrategy)) {
@@ -234,7 +236,7 @@ abstract class AnnotationsScanner {
 
 	@Nullable
 	private static <C, R> R processMethod(C context, Method source,
-			SearchStrategy searchStrategy, AnnotationsProcessor<C, R> processor) {
+										  MergedAnnotations.SearchStrategy searchStrategy, AnnotationsProcessor<C, R> processor) {
 
 		switch (searchStrategy) {
 			case DIRECT:
@@ -479,11 +481,11 @@ abstract class AnnotationsScanner {
 		return AnnotationFilter.PLAIN.matches(annotationType);
 	}
 
-	static boolean isKnownEmpty(AnnotatedElement source, SearchStrategy searchStrategy) {
+	static boolean isKnownEmpty(AnnotatedElement source, MergedAnnotations.SearchStrategy searchStrategy) {
 		if (hasPlainJavaAnnotationsOnly(source)) {
 			return true;
 		}
-		if (searchStrategy == SearchStrategy.DIRECT || isWithoutHierarchy(source, searchStrategy)) {
+		if (searchStrategy == MergedAnnotations.SearchStrategy.DIRECT || isWithoutHierarchy(source, searchStrategy)) {
 			if (source instanceof Method && ((Method) source).isBridge()) {
 				return false;
 			}
@@ -508,7 +510,7 @@ abstract class AnnotationsScanner {
 		return (type.getName().startsWith("java.") || type == Ordered.class);
 	}
 
-	private static boolean isWithoutHierarchy(AnnotatedElement source, SearchStrategy searchStrategy) {
+	private static boolean isWithoutHierarchy(AnnotatedElement source, MergedAnnotations.SearchStrategy searchStrategy) {
 		if (source == Object.class) {
 			return true;
 		}
@@ -516,7 +518,7 @@ abstract class AnnotationsScanner {
 			Class<?> sourceClass = (Class<?>) source;
 			boolean noSuperTypes = (sourceClass.getSuperclass() == Object.class &&
 					sourceClass.getInterfaces().length == 0);
-			return (searchStrategy == SearchStrategy.TYPE_HIERARCHY_AND_ENCLOSING_CLASSES ? noSuperTypes &&
+			return (searchStrategy == MergedAnnotations.SearchStrategy.TYPE_HIERARCHY_AND_ENCLOSING_CLASSES ? noSuperTypes &&
 					sourceClass.getEnclosingClass() == null : noSuperTypes);
 		}
 		if (source instanceof Method) {

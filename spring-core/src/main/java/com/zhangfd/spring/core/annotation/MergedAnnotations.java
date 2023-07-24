@@ -25,8 +25,8 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import com.zhangfd.spring.lang.Nullable;
-import org.springframework.lang.Nullable;
-import org.springframework.util.Assert;
+import com.zhangfd.spring.util.Assert;
+
 
 /**
  * Provides access to a collection of merged annotations, usually obtained

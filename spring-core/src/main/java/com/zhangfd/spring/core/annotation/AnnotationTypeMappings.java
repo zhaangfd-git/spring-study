@@ -16,6 +16,9 @@
 
 package com.zhangfd.spring.core.annotation;
 
+import com.zhangfd.spring.lang.Nullable;
+import com.zhangfd.spring.util.ConcurrentReferenceHashMap;
+
 import java.lang.annotation.Annotation;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -23,8 +26,6 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.lang.Nullable;
-import org.springframework.util.ConcurrentReferenceHashMap;
 
 /**
  * Provides {@link AnnotationTypeMapping} information for a single source
