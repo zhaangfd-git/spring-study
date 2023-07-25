@@ -251,7 +251,7 @@ public abstract class AbstractBeanDefinition   extends BeanMetadataAttributeAcce
                 setBeanClass(otherAbd.getBeanClass());
             }
             if (otherAbd.hasConstructorArgumentValues()) {
-              //  getConstructorArgumentValues().addArgumentValues(other.getConstructorArgumentValues());
+                //getConstructorArgumentValues().addArgumentValues(other.getConstructorArgumentValues());
             }
             if (otherAbd.hasPropertyValues()) {
                // getPropertyValues().addPropertyValues(other.getPropertyValues());

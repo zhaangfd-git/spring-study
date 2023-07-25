@@ -1,6 +1,7 @@
 package com.zhangfd.spring.factory.config;
 
 import com.zhangfd.spring.BeanMetadataElement;
+import com.zhangfd.spring.Mergeable;
 import com.zhangfd.spring.lang.Nullable;
 import com.zhangfd.spring.util.Assert;
 import com.zhangfd.spring.util.ClassUtils;
@@ -44,12 +45,12 @@ public class ConstructorArgumentValues {
 
     private void addOrMergeIndexedArgumentValue(Integer key, ValueHolder newValue) {
         ValueHolder currentValue = this.indexedArgumentValues.get(key);
-        /*if (currentValue != null && newValue.getValue() instanceof Mergeable) {
+        if (currentValue != null && newValue.getValue() instanceof Mergeable) {
             Mergeable mergeable = (Mergeable) newValue.getValue();
             if (mergeable.isMergeEnabled()) {
                 newValue.setValue(mergeable.merge(currentValue.getValue()));
             }
-        }*/
+        }
         this.indexedArgumentValues.put(key, newValue);
     }
 
@@ -64,7 +65,7 @@ public class ConstructorArgumentValues {
         if (newValue.getName() != null) {
             for (Iterator<ValueHolder> it = this.genericArgumentValues.iterator(); it.hasNext();) {
                 ValueHolder currentValue = it.next();
-               /* if (newValue.getName().equals(currentValue.getName())) {
+                if (newValue.getName().equals(currentValue.getName())) {
                     if (newValue.getValue() instanceof Mergeable) {
                         Mergeable mergeable = (Mergeable) newValue.getValue();
                         if (mergeable.isMergeEnabled()) {
@@ -72,7 +73,7 @@ public class ConstructorArgumentValues {
                         }
                     }
                     it.remove();
-                }*/
+                }
             }
         }
         this.genericArgumentValues.add(newValue);
