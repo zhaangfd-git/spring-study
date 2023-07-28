@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.zhangfd.jcl.Log;
+import com.zhangfd.jcl.LogFactory;
 import com.zhangfd.spring.util.Assert;
 import com.zhangfd.spring.util.ObjectUtils;
 import com.zhangfd.spring.util.StringUtils;
@@ -43,7 +45,7 @@ import com.zhangfd.spring.util.StringValueResolver;
 public class SimpleAliasRegistry implements AliasRegistry {
 
 	/** Logger available to subclasses. */
-	//protected final Log logger = LogFactory.getLog(getClass());
+	protected final Log logger = LogFactory.getLog(getClass());
 
 	/** Map from alias to canonical name. */
 	private final Map<String, String> aliasMap = new ConcurrentHashMap<>(16);
@@ -56,9 +58,9 @@ public class SimpleAliasRegistry implements AliasRegistry {
 		synchronized (this.aliasMap) {
 			if (alias.equals(name)) {
 				this.aliasMap.remove(alias);
-				/*if (logger.isDebugEnabled()) {
+				if (logger.isDebugEnabled()) {
 					logger.debug("Alias definition '" + alias + "' ignored since it points to same name");
-				}*/
+				}
 			}
 			else {
 				String registeredName = this.aliasMap.get(alias);
@@ -71,16 +73,16 @@ public class SimpleAliasRegistry implements AliasRegistry {
 						throw new IllegalStateException("Cannot define alias '" + alias + "' for name '" +
 								name + "': It is already registered for name '" + registeredName + "'.");
 					}
-					/*if (logger.isDebugEnabled()) {
+					if (logger.isDebugEnabled()) {
 						logger.debug("Overriding alias '" + alias + "' definition for registered name '" +
 								registeredName + "' with new target name '" + name + "'");
-					}*/
+					}
 				}
 				checkForAliasCircle(name, alias);
 				this.aliasMap.put(alias, name);
-				/*if (logger.isTraceEnabled()) {
+				if (logger.isTraceEnabled()) {
 					logger.trace("Alias definition '" + alias + "' registered for name '" + name + "'");
-				}*/
+				}
 			}
 		}
 	}

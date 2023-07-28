@@ -15,16 +15,16 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DefaultSingletonBeanRegistry  extends SimpleAliasRegistry implements SingletonBeanRegistry {
 
-    /** Cache of singleton objects: bean name to bean instance. */
+    /**存放实例化并初始化话的实例对象 */
     private final Map<String, Object> singletonObjects = new ConcurrentHashMap<>(256);
 
     /** Cache of singleton factories: bean name to ObjectFactory. */
     private final Map<String, ObjectFactory<?>> singletonFactories = new HashMap<>(16);
 
-    /** Cache of early singleton objects: bean name to bean instance. */
+    /** 把通过反射创建的对象先放在这里，此时还没初始化 */
     private final Map<String, Object> earlySingletonObjects = new ConcurrentHashMap<>(16);
 
-    /** Set of registered singletons, containing the bean names in registration order. */
+    /** 存放所有的bean的名字 */
     private final Set<String> registeredSingletons = new LinkedHashSet<>(256);
 
     private final Map<String, Set<String>> dependentBeanMap = new ConcurrentHashMap<>(64);

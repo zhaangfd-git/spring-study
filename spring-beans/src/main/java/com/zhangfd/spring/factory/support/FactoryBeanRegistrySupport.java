@@ -14,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public abstract  class FactoryBeanRegistrySupport extends  DefaultSingletonBeanRegistry {
 
+    //存放通过FactoryBean创建的代理的真实对象的bean---对象
     private final Map<String, Object> factoryBeanObjectCache = new ConcurrentHashMap<>(16);
 
 
