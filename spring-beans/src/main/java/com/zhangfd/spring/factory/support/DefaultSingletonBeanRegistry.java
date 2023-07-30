@@ -15,16 +15,16 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DefaultSingletonBeanRegistry  extends SimpleAliasRegistry implements SingletonBeanRegistry {
 
-    /**存放实例化并初始化话的实例对象 */
+    /**存放实例化并初始化话的实例对象(包含单例、原型等)，第一级缓存 */
     private final Map<String, Object> singletonObjects = new ConcurrentHashMap<>(256);
 
-    /** Cache of singleton factories: bean name to ObjectFactory. */
+    /** 缓存单例，目的是解决spring的所谓循环依赖问题，第三级缓存. */
     private final Map<String, ObjectFactory<?>> singletonFactories = new HashMap<>(16);
 
-    /** 把通过反射创建的对象先放在这里，此时还没初始化 */
+    /** 把通过反射创建的对象先放在这里，此时还没初始化，第二级缓存 */
     private final Map<String, Object> earlySingletonObjects = new ConcurrentHashMap<>(16);
 
-    /** 存放所有的bean的名字 */
+    /** 存放所有的单例bean的名字 */
     private final Set<String> registeredSingletons = new LinkedHashSet<>(256);
 
     private final Map<String, Set<String>> dependentBeanMap = new ConcurrentHashMap<>(64);
