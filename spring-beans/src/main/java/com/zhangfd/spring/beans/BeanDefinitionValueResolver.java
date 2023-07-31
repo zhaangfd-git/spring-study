@@ -16,6 +16,7 @@
 
 package com.zhangfd.spring.beans;
 
+import com.zhangfd.spring.exception.BeanCreationException;
 import com.zhangfd.spring.factory.*;
 import com.zhangfd.spring.factory.config.BeanDefinition;
 import com.zhangfd.spring.factory.config.TypedStringValue;

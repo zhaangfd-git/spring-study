@@ -58,11 +58,11 @@ public class PropertyValue extends BeanMetadataAttributeAccessor implements Seri
 
 	/** Package-visible field that indicates whether conversion is necessary. */
 	@Nullable
-	volatile Boolean conversionNecessary;
+	public  volatile Boolean conversionNecessary;
 
 	/** Package-visible field for caching the resolved property path tokens. */
 	@Nullable
-	transient volatile Object resolvedTokens;
+	public transient volatile Object resolvedTokens;
 
 
 	/**

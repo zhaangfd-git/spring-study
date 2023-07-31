@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2017 the original author or authors.
+ * Copyright 2002-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,40 +14,36 @@
  * limitations under the License.
  */
 
-package com.zhangfd.spring;
+package com.zhangfd.spring.exception;
 
-import com.zhangfd.spring.core.NestedRuntimeException;
-import com.zhangfd.spring.lang.Nullable;
 
+import com.zhangfd.spring.FatalBeanException;
 
 /**
- * Abstract superclass for all exceptions thrown in the beans package
- * and subpackages.
+ * Exception thrown when the validation of a bean definition failed.
  *
- * <p>Note that this is a runtime (unchecked) exception. Beans exceptions
- * are usually fatal; there is no reason for them to be checked.
- *
- * @author Rod Johnson
  * @author Juergen Hoeller
+ * @since 21.11.2003
+ * @see AbstractBeanDefinition#validate()
  */
 @SuppressWarnings("serial")
-public class BeansException extends NestedRuntimeException {
+public class BeanDefinitionValidationException extends FatalBeanException {
 
 	/**
-	 * Create a new BeansException with the specified message.
+	 * Create a new BeanDefinitionValidationException with the specified message.
 	 * @param msg the detail message
 	 */
-	public BeansException(String msg) {
+	public BeanDefinitionValidationException(String msg) {
 		super(msg);
 	}
 
 	/**
-	 * Create a new BeansException with the specified message
+	 * Create a new BeanDefinitionValidationException with the specified message
 	 * and root cause.
 	 * @param msg the detail message
 	 * @param cause the root cause
 	 */
-	public BeansException(@Nullable String msg, @Nullable Throwable cause) {
+	public BeanDefinitionValidationException(String msg, Throwable cause) {
 		super(msg, cause);
 	}
 

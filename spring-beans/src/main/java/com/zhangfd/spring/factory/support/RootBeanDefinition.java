@@ -5,6 +5,7 @@ import com.zhangfd.spring.factory.config.BeanDefinition;
 import com.zhangfd.spring.factory.config.BeanDefinitionHolder;
 import com.zhangfd.spring.lang.Nullable;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 
@@ -38,6 +39,9 @@ public class RootBeanDefinition  extends  AbstractBeanDefinition   {
 
     //觉得beanDefinition是否需要被合并
     volatile boolean stale;
+
+    @Nullable
+    volatile Boolean beforeInstantiationResolved;
 
 
     @Nullable
@@ -137,6 +141,11 @@ public class RootBeanDefinition  extends  AbstractBeanDefinition   {
         }
         ResolvableType targetType = this.targetType;
         return (targetType != null ? targetType.resolve() : null);
+    }
+
+    @Nullable
+    public Constructor<?>[] getPreferredConstructors() {
+        return null;
     }
 
 }

@@ -6,6 +6,8 @@ import com.zhangfd.spring.beans.TypeConverter;
 import com.zhangfd.spring.core.AttributeAccessor;
 import com.zhangfd.spring.core.DecoratingClassLoader;
 import com.zhangfd.spring.core.ResolvableType;
+import com.zhangfd.spring.core.convert.ConversionService;
+import com.zhangfd.spring.exception.BeanCreationException;
 import com.zhangfd.spring.exception.BeanDefinitionStoreException;
 import com.zhangfd.spring.exception.NoSuchBeanDefinitionException;
 import com.zhangfd.spring.factory.*;
@@ -18,8 +20,10 @@ import com.zhangfd.spring.util.StringUtils;
 
 import java.security.*;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public abstract class AbstractBeanFactory  extends  FactoryBeanRegistrySupport implements ConfigurableBeanFactory {
 
@@ -36,6 +40,8 @@ public abstract class AbstractBeanFactory  extends  FactoryBeanRegistrySupport i
     private ClassLoader beanClassLoader = ClassUtils.getDefaultClassLoader();
 
 
+    private final List<BeanPostProcessor> beanPostProcessors = new CopyOnWriteArrayList<>();
+
     @Nullable
     private ClassLoader tempClassLoader;
 
@@ -43,15 +49,26 @@ public abstract class AbstractBeanFactory  extends  FactoryBeanRegistrySupport i
     @Nullable
     private BeanExpressionResolver beanExpressionResolver;
 
+    @Nullable
+    private ConversionService conversionService;
 
-    protected void initBeanWrapper(BeanWrapper bw) {
-       /* bw.setConversionService(getConversionService());
-        registerCustomEditors(bw);*/
-    }
+
+
 
     //容器定义的类型转换器
     @Nullable
     private TypeConverter typeConverter;
+
+    //标识这个容器里有没有InstantiationAwareBeanPostProcessor接口的实现类
+    private volatile boolean hasInstantiationAwareBeanPostProcessors;
+
+    private volatile boolean hasDestructionAwareBeanPostProcessors;
+
+
+    protected void initBeanWrapper(BeanWrapper bw) {
+        bw.setConversionService(getConversionService());
+        //registerCustomEditors(bw);
+    }
 
     @Override
     public AccessControlContext getAccessControlContext() {
@@ -67,6 +84,50 @@ public abstract class AbstractBeanFactory  extends  FactoryBeanRegistrySupport i
     }
 
 
+    @Override
+    public void setConversionService(@Nullable ConversionService conversionService) {
+        this.conversionService = conversionService;
+    }
+
+    @Override
+    @Nullable
+    public ConversionService getConversionService() {
+        return this.conversionService;
+    }
+
+
+    protected boolean hasInstantiationAwareBeanPostProcessors() {
+        return this.hasInstantiationAwareBeanPostProcessors;
+    }
+
+    @Override
+    public void addBeanPostProcessor(BeanPostProcessor beanPostProcessor) {
+        Assert.notNull(beanPostProcessor, "BeanPostProcessor must not be null");
+        // Remove from old position, if any
+        this.beanPostProcessors.remove(beanPostProcessor);
+        // Track whether it is instantiation/destruction aware
+        if (beanPostProcessor instanceof InstantiationAwareBeanPostProcessor) {
+            this.hasInstantiationAwareBeanPostProcessors = true;
+        }
+        if (beanPostProcessor instanceof DestructionAwareBeanPostProcessor) {
+            this.hasDestructionAwareBeanPostProcessors = true;
+        }
+        // Add to end of list
+        this.beanPostProcessors.add(beanPostProcessor);
+    }
+
+    @Override
+    public int getBeanPostProcessorCount() {
+        return this.beanPostProcessors.size();
+    }
+
+    /**
+     * Return the list of BeanPostProcessors that will get applied
+     * to beans created with this factory.
+     */
+    public List<BeanPostProcessor> getBeanPostProcessors() {
+        return this.beanPostProcessors;
+    }
 
     @Override
     @Nullable
@@ -614,5 +675,8 @@ public abstract class AbstractBeanFactory  extends  FactoryBeanRegistrySupport i
     protected abstract boolean containsBeanDefinition(String beanName);
 
     protected abstract BeanDefinition getBeanDefinition(String beanName) throws BeansException;
+
+    protected abstract Object createBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)
+            throws BeanCreationException;
 
 }

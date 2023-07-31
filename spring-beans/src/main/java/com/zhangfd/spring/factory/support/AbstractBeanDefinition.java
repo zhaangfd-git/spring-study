@@ -3,6 +3,7 @@ package com.zhangfd.spring.factory.support;
 import com.zhangfd.spring.MutablePropertyValues;
 import com.zhangfd.spring.beans.BeanMetadataAttributeAccessor;
 import com.zhangfd.spring.core.ResolvableType;
+import com.zhangfd.spring.exception.BeanDefinitionValidationException;
 import com.zhangfd.spring.factory.config.AutowireCapableBeanFactory;
 import com.zhangfd.spring.factory.config.BeanDefinition;
 import com.zhangfd.spring.factory.config.ConstructorArgumentValues;
@@ -11,6 +12,7 @@ import com.zhangfd.spring.util.ClassUtils;
 import com.zhangfd.spring.util.StringUtils;
 
 import java.lang.reflect.Constructor;
+import java.util.function.Supplier;
 
 public abstract class AbstractBeanDefinition   extends BeanMetadataAttributeAccessor implements BeanDefinition, Cloneable{
 
@@ -70,6 +72,9 @@ public abstract class AbstractBeanDefinition   extends BeanMetadataAttributeAcce
 
     //判断是否构造方法时public类型的
     private boolean nonPublicAccessAllowed = true;
+
+    @Nullable
+    private Supplier<?> instanceSupplier;
 
     /**
      * Constant that indicates no dependency check at all.
@@ -134,6 +139,8 @@ public abstract class AbstractBeanDefinition   extends BeanMetadataAttributeAcce
 
     @Nullable
     private String destroyMethodName;
+
+    private boolean synthetic = false;
 
     protected AbstractBeanDefinition(BeanDefinition original) {
 //        setParentName(original.getParentName());
@@ -204,10 +211,50 @@ public abstract class AbstractBeanDefinition   extends BeanMetadataAttributeAcce
         this.propertyValues = pvs;
     }
 
+    public void prepareMethodOverrides() throws BeanDefinitionValidationException {
+        // Check that lookup methods exist and determine their overloaded status.
+        if (hasMethodOverrides()) {
+            getMethodOverrides().getOverrides().forEach(this::prepareMethodOverride);
+        }
+    }
+
+    protected void prepareMethodOverride(MethodOverride mo) throws BeanDefinitionValidationException {
+        int count = ClassUtils.getMethodCountForName(getBeanClass(), mo.getMethodName());
+        if (count == 0) {
+            throw new BeanDefinitionValidationException(
+                    "Invalid method override: no method with name '" + mo.getMethodName() +
+                            "' on class [" + getBeanClassName() + "]");
+        }
+        else if (count == 1) {
+            // Mark override as not overloaded, to avoid the overhead of arg type checking.
+            mo.setOverloaded(false);
+        }
+    }
 
 
 
+    /**
+     * Specify a callback for creating an instance of the bean,
+     * as an alternative to a declaratively specified factory method.
+     * <p>If such a callback is set, it will override any other constructor
+     * or factory method metadata. However, bean property population and
+     * potential annotation-driven injection will still apply as usual.
+     * @since 5.0
+     * @see #setConstructorArgumentValues(ConstructorArgumentValues)
+     * @see #setPropertyValues(MutablePropertyValues)
+     */
+    public void setInstanceSupplier(@Nullable Supplier<?> instanceSupplier) {
+        this.instanceSupplier = instanceSupplier;
+    }
 
+    /**
+     * Return a callback for creating an instance of the bean, if any.
+     * @since 5.0
+     */
+    @Nullable
+    public Supplier<?> getInstanceSupplier() {
+        return this.instanceSupplier;
+    }
 
     // 运行时方法被重写，说明使用了cglib代理，后面会据此判断是否是cglib代理生成的实体类
     public boolean hasMethodOverrides() {
@@ -729,5 +776,13 @@ public abstract class AbstractBeanDefinition   extends BeanMetadataAttributeAcce
 
     public void setLenientConstructorResolution(boolean lenientConstructorResolution) {
         this.lenientConstructorResolution = lenientConstructorResolution;
+    }
+
+    public boolean isSynthetic() {
+        return synthetic;
+    }
+
+    public void setSynthetic(boolean synthetic) {
+        this.synthetic = synthetic;
     }
 }

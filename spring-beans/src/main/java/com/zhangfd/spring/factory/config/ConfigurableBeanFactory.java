@@ -1,6 +1,7 @@
 package com.zhangfd.spring.factory.config;
 
 import com.zhangfd.spring.beans.TypeConverter;
+import com.zhangfd.spring.core.convert.ConversionService;
 import com.zhangfd.spring.exception.NoSuchBeanDefinitionException;
 import com.zhangfd.spring.factory.support.HierarchicalBeanFactory;
 import com.zhangfd.spring.lang.Nullable;
@@ -46,5 +47,22 @@ public interface ConfigurableBeanFactory  extends HierarchicalBeanFactory {
 
 
     void setTypeConverter(TypeConverter typeConverter);
+
+    void addBeanPostProcessor(BeanPostProcessor beanPostProcessor);
+
+    /**
+     * Return the current number of registered BeanPostProcessors, if any.
+     */
+    int getBeanPostProcessorCount();
+
+
+    void setConversionService(@Nullable ConversionService conversionService);
+
+    /**
+     * Return the associated ConversionService, if any.
+     * @since 3.0
+     */
+    @Nullable
+    ConversionService getConversionService();
 
 }
