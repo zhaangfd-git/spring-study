@@ -3,6 +3,7 @@ package com.zhangfd.spring.factory.support;
 import com.zhangfd.jcl.Log;
 import com.zhangfd.jcl.LogFactory;
 import com.zhangfd.spring.BeanWrapper;
+import com.zhangfd.spring.BeanWrapperImpl;
 import com.zhangfd.spring.BeansException;
 import com.zhangfd.spring.core.DefaultParameterNameDiscoverer;
 import com.zhangfd.spring.core.NamedThreadLocal;

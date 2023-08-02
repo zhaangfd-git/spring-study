@@ -24,10 +24,13 @@ import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 
+import com.zhangfd.spring.beans.CachedIntrospectionResults;
+import com.zhangfd.spring.beans.GenericTypeAwarePropertyDescriptor;
 import com.zhangfd.spring.beans.TypeConverterDelegate;
 import com.zhangfd.spring.core.ResolvableType;
 import com.zhangfd.spring.core.convert.Property;
 import com.zhangfd.spring.core.convert.TypeDescriptor;
+import com.zhangfd.spring.exception.InvalidPropertyException;
 import com.zhangfd.spring.lang.Nullable;
 import com.zhangfd.spring.util.ReflectionUtils;
 
@@ -207,12 +210,12 @@ public class BeanWrapperImpl extends AbstractNestablePropertyAccessor implements
 	 * @throws TypeMismatchException if type conversion failed
 	 */
 	@Nullable
-	public Object convertForProperty(@Nullable Object value, String propertyName) throws TypeMismatchException {
+	public Object convertForProperty(@Nullable Object value, String propertyName) throws  Exception {
 		CachedIntrospectionResults cachedIntrospectionResults = getCachedIntrospectionResults();
 		PropertyDescriptor pd = cachedIntrospectionResults.getPropertyDescriptor(propertyName);
 		if (pd == null) {
-			throw new InvalidPropertyException(getRootClass(), getNestedPath() + propertyName,
-					"No property '" + propertyName + "' found");
+			/*throw new InvalidPropertyException(getRootClass(), getNestedPath() + propertyName,
+					"No property '" + propertyName + "' found");*/
 		}
 		TypeDescriptor td = cachedIntrospectionResults.getTypeDescriptor(pd);
 		if (td == null) {
@@ -239,10 +242,11 @@ public class BeanWrapperImpl extends AbstractNestablePropertyAccessor implements
 	}
 
 	@Override
-	protected NotWritablePropertyException createNotWritablePropertyException(String propertyName) {
-		PropertyMatches matches = PropertyMatches.forProperty(propertyName, getRootClass());
+	protected BeansException /*NotWritablePropertyException*/ createNotWritablePropertyException(String propertyName) {
+		/*PropertyMatches matches = PropertyMatches.forProperty(propertyName, getRootClass());
 		throw new NotWritablePropertyException(getRootClass(), getNestedPath() + propertyName,
-				matches.buildErrorMessage(), matches.getPossibleMatches());
+				matches.buildErrorMessage(), matches.getPossibleMatches());*/
+		return null;
 	}
 
 	@Override
@@ -256,8 +260,8 @@ public class BeanWrapperImpl extends AbstractNestablePropertyAccessor implements
 		String finalPath = getFinalPath(nestedBw, propertyName);
 		PropertyDescriptor pd = nestedBw.getCachedIntrospectionResults().getPropertyDescriptor(finalPath);
 		if (pd == null) {
-			throw new InvalidPropertyException(getRootClass(), getNestedPath() + propertyName,
-					"No property '" + propertyName + "' found");
+			/*throw new InvalidPropertyException(getRootClass(), getNestedPath() + propertyName,
+					"No property '" + propertyName + "' found");*/
 		}
 		return pd;
 	}

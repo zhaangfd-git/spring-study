@@ -616,7 +616,7 @@ public abstract class AbstractNestablePropertyAccessor extends AbstractPropertyA
 	}
 
 	@Nullable
-	protected Object convertForProperty(
+	public Object convertForProperty(
 			String propertyName, @Nullable Object oldValue, @Nullable Object newValue, TypeDescriptor td)
 			throws Exception {
 
