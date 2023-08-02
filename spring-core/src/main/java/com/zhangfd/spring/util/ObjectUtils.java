@@ -166,7 +166,6 @@ public abstract class ObjectUtils {
 	 * @since 5.0
 	 */
 	@Nullable
-
 	public static Object unwrapOptional(@Nullable Object obj) {
 		if (obj instanceof Optional) {
 			Optional<?> optional = (Optional<?>) obj;
