@@ -1,7 +1,9 @@
 package com.zhangfd.spring.factory.support;
 
+import com.zhangfd.spring.BeanUtils;
 import com.zhangfd.spring.BeanWrapper;
 import com.zhangfd.spring.BeansException;
+import com.zhangfd.spring.beans.PropertyEditorRegistrar;
 import com.zhangfd.spring.beans.TypeConverter;
 import com.zhangfd.spring.core.AttributeAccessor;
 import com.zhangfd.spring.core.DecoratingClassLoader;
@@ -18,10 +20,9 @@ import com.zhangfd.spring.util.ClassUtils;
 import com.zhangfd.spring.util.ObjectUtils;
 import com.zhangfd.spring.util.StringUtils;
 
+import java.beans.PropertyEditor;
 import java.security.*;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -53,6 +54,10 @@ public abstract class AbstractBeanFactory  extends  FactoryBeanRegistrySupport i
     private ConversionService conversionService;
 
 
+    private final Set<PropertyEditorRegistrar> propertyEditorRegistrars = new LinkedHashSet<>(4);
+
+    /** Custom PropertyEditors to apply to the beans of this factory. */
+    private final Map<Class<?>, Class<? extends PropertyEditor>> customEditors = new HashMap<>(4);
 
 
     //容器定义的类型转换器
@@ -67,9 +72,45 @@ public abstract class AbstractBeanFactory  extends  FactoryBeanRegistrySupport i
 
     protected void initBeanWrapper(BeanWrapper bw) {
         bw.setConversionService(getConversionService());
-        //registerCustomEditors(bw);
+        registerCustomEditors(bw);
     }
 
+    protected void registerCustomEditors(PropertyEditorRegistry registry) {
+        PropertyEditorRegistrySupport registrySupport =
+                (registry instanceof PropertyEditorRegistrySupport ? (PropertyEditorRegistrySupport) registry : null);
+        if (registrySupport != null) {
+            registrySupport.useConfigValueEditors();
+        }
+        if (!this.propertyEditorRegistrars.isEmpty()) {
+            for (PropertyEditorRegistrar registrar : this.propertyEditorRegistrars) {
+                try {
+                    registrar.registerCustomEditors(registry);
+                }
+                catch (BeanCreationException ex) {
+                    Throwable rootCause = ex.getMostSpecificCause();
+                    if (rootCause instanceof BeanCreationException) {
+                        BeanCreationException bce = (BeanCreationException) rootCause;
+                        String bceBeanName = bce.getBeanName();
+                        if (isCurrentlyInCreation(bceBeanName))
+                            if (bceBeanName != null) {
+                                if (logger.isDebugEnabled()) {
+                                    logger.debug("PropertyEditorRegistrar [" + registrar.getClass().getName() +
+                                            "] failed because it tried to obtain currently created bean '" +
+                                            ex.getBeanName() + "': " + ex.getMessage());
+                                }
+                                onSuppressedException(ex);
+                                continue;
+                            }
+                    }
+                    throw ex;
+                }
+            }
+        }
+        if (!this.customEditors.isEmpty()) {
+            this.customEditors.forEach((requiredType, editorClass) ->
+                    registry.registerCustomEditor(requiredType, BeanUtils.instantiateClass(editorClass)));
+        }
+    }
     @Override
     public AccessControlContext getAccessControlContext() {
         return (this.securityContextProvider != null ?
@@ -429,7 +470,7 @@ public abstract class AbstractBeanFactory  extends  FactoryBeanRegistrySupport i
 
 
     @Nullable
-    protected Class<?> resolveBeanClass(RootBeanDefinition mbd, String beanName, Class<?>... typesToMatch)
+    protected  Class<?> resolveBeanClass(RootBeanDefinition mbd, String beanName, Class<?>... typesToMatch)
              {
 
         try {

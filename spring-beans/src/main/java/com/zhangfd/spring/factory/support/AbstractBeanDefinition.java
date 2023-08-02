@@ -16,6 +16,7 @@ import java.util.function.Supplier;
 
 public abstract class AbstractBeanDefinition   extends BeanMetadataAttributeAccessor implements BeanDefinition, Cloneable{
 
+    //可以是类类型，也可以是类的全路径名
     @Nullable
     private volatile Object beanClass;
 

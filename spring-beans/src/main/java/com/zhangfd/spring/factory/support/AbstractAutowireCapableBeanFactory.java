@@ -143,11 +143,13 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         if (mbd.isSingleton()) {
             instanceWrapper = this.factoryBeanInstanceCache.remove(beanName);
         }
-        //创建bean的包装类，此时已经通过反射创建了对象，被包装在BeanWrapper内
+        //1、创建bean的包装类，此时已经通过反射创建了对象，被包装在BeanWrapper内
         if (instanceWrapper == null) {
             instanceWrapper = createBeanInstance(beanName, mbd, args);
         }
 
+
+        //2、
 
 
 
@@ -156,8 +158,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     }
 
 
-    protected BeanWrapper createBeanInstance(String beanName, RootBeanDefinition mbd, @Nullable Object[] args) {
 
+    protected BeanWrapper createBeanInstance(String beanName, RootBeanDefinition mbd, @Nullable Object[] args) {
+        //确定需要实例化的类类型
         Class<?> beanClass = resolveBeanClass(mbd, beanName);
 
         if (beanClass != null && !Modifier.isPublic(beanClass.getModifiers()) && !mbd.isNonPublicAccessAllowed()) {
@@ -215,12 +218,26 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         return instantiateBean(beanName, mbd);
     }
 
+    /**
+     * 如果有依赖的构造方法，实例化的时候调用这个
+     * @param beanName
+     * @param mbd
+     * @param ctors
+     * @param explicitArgs
+     * @return
+     */
     protected BeanWrapper autowireConstructor(
             String beanName, RootBeanDefinition mbd, @Nullable Constructor<?>[] ctors, @Nullable Object[] explicitArgs) {
 
         return new ConstructorResolver(this).autowireConstructor(beanName, mbd, ctors, explicitArgs);
     }
 
+    /**
+     * 普通的无参构造方法时，实例化调用这个
+     * @param beanName
+     * @param mbd
+     * @return
+     */
     protected BeanWrapper instantiateBean(String beanName, RootBeanDefinition mbd) {
         try {
             Object beanInstance;

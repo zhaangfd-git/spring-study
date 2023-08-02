@@ -62,6 +62,10 @@ public class RootBeanDefinition  extends  AbstractBeanDefinition   {
     @Nullable
     volatile ResolvableType factoryMethodReturnType;
 
+    public RootBeanDefinition() {
+        super();
+    }
+
     public RootBeanDefinition(RootBeanDefinition original) {
         super(original);
         this.decoratedDefinition = original.decoratedDefinition;
