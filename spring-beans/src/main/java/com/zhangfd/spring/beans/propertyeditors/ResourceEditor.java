@@ -19,7 +19,9 @@ package com.zhangfd.spring.beans.propertyeditors;
 import java.beans.PropertyEditorSupport;
 import java.io.IOException;
 
+import com.zhangfd.spring.core.env.PropertyResolver;
 import com.zhangfd.spring.core.io.Resource;
+import com.zhangfd.spring.core.io.ResourceLoader;
 import com.zhangfd.spring.lang.Nullable;
 import com.zhangfd.spring.util.Assert;
 import com.zhangfd.spring.util.ClassUtils;
