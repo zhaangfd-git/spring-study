@@ -340,4 +340,14 @@ public class BeanWrapperImpl extends AbstractNestablePropertyAccessor implements
 		}
 	}
 
+
+	public static void main(String[] args) {
+       BeanWrapper beanWrapper = new BeanWrapperImpl();
+       Integer integer = beanWrapper.convertIfNecessary("8", Integer.class);
+
+       System.out.println(integer);
+	}
+
+
 }
+

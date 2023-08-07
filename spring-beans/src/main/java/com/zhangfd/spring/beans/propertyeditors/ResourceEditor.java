@@ -12,7 +12,9 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
+
+
 
 package com.zhangfd.spring.beans.propertyeditors;
 
@@ -28,6 +30,7 @@ import com.zhangfd.spring.util.ClassUtils;
 import com.zhangfd.spring.util.ObjectUtils;
 import com.zhangfd.spring.util.StringUtils;;
 
+*/
 /**
  * {@link java.beans.PropertyEditor Editor} for {@link Resource}
  * descriptors, to automatically convert {@code String} locations
@@ -49,7 +52,9 @@ import com.zhangfd.spring.util.StringUtils;;
  * @see ResourceLoader
  * @see DefaultResourceLoader
  * @see PropertyResolver#resolvePlaceholders
- */
+ *//*
+
+
 public class ResourceEditor extends PropertyEditorSupport {
 
 	private final ResourceLoader resourceLoader;
@@ -60,32 +65,48 @@ public class ResourceEditor extends PropertyEditorSupport {
 	private final boolean ignoreUnresolvablePlaceholders;
 
 
-	/**
+*/
+/**
 	 * Create a new instance of the {@link ResourceEditor} class
 	 * using a {@link DefaultResourceLoader} and {@link StandardEnvironment}.
-	 */
+	 *//*
+*/
+/*
+
 	public ResourceEditor() {
 		this(new DefaultResourceLoader(), null);
 	}
 
-	/**
+	*//*
+
+*/
+/**
 	 * Create a new instance of the {@link ResourceEditor} class
 	 * using the given {@link ResourceLoader} and {@link PropertyResolver}.
 	 * @param resourceLoader the {@code ResourceLoader} to use
 	 * @param propertyResolver the {@code PropertyResolver} to use
-	 */
+	 *//*
+*/
+/*
+
 	public ResourceEditor(ResourceLoader resourceLoader, @Nullable PropertyResolver propertyResolver) {
 		this(resourceLoader, propertyResolver, true);
 	}
 
-	/**
+	*//*
+
+*/
+/**
 	 * Create a new instance of the {@link ResourceEditor} class
 	 * using the given {@link ResourceLoader}.
 	 * @param resourceLoader the {@code ResourceLoader} to use
 	 * @param propertyResolver the {@code PropertyResolver} to use
 	 * @param ignoreUnresolvablePlaceholders whether to ignore unresolvable placeholders
 	 * if no corresponding property could be found in the given {@code propertyResolver}
-	 */
+	 *//*
+*/
+/*
+
 	public ResourceEditor(ResourceLoader resourceLoader, @Nullable PropertyResolver propertyResolver,
 			boolean ignoreUnresolvablePlaceholders) {
 
@@ -107,14 +128,20 @@ public class ResourceEditor extends PropertyEditorSupport {
 		}
 	}
 
-	/**
+	*//*
+
+*/
+/**
 	 * Resolve the given path, replacing placeholders with corresponding
 	 * property values from the {@code environment} if necessary.
 	 * @param path the original file path
 	 * @return the resolved file path
 	 * @see PropertyResolver#resolvePlaceholders
 	 * @see PropertyResolver#resolveRequiredPlaceholders
-	 */
+	 *//*
+*/
+/*
+
 	protected String resolvePath(String path) {
 		if (this.propertyResolver == null) {
 			this.propertyResolver = new StandardEnvironment();
@@ -140,3 +167,5 @@ public class ResourceEditor extends PropertyEditorSupport {
 	}
 
 }
+*/
+

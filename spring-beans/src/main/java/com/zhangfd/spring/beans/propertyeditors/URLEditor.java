@@ -12,7 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
+
 
 package com.zhangfd.spring.beans.propertyeditors;
 
@@ -25,6 +26,7 @@ import java.net.URL;
 
 
 
+*/
 /**
  * Editor for {@code java.net.URL}, to directly populate a URL property
  * instead of using a String property as bridge.
@@ -44,23 +46,28 @@ import java.net.URL;
  * @see org.springframework.core.io.ResourceLoader
  * @see FileEditor
  * @see InputStreamEditor
- */
+ *//*
+
 public class URLEditor extends PropertyEditorSupport {
 
 	private final ResourceEditor resourceEditor;
 
 
-	/**
+	*/
+/**
 	 * Create a new URLEditor, using a default ResourceEditor underneath.
-	 */
+	 *//*
+
 	public URLEditor() {
 		this.resourceEditor = new ResourceEditor();
 	}
 
-	/**
+	*/
+/**
 	 * Create a new URLEditor, using the given ResourceEditor underneath.
 	 * @param resourceEditor the ResourceEditor to use
-	 */
+	 *//*
+
 	public URLEditor(ResourceEditor resourceEditor) {
 		Assert.notNull(resourceEditor, "ResourceEditor must not be null");
 		this.resourceEditor = resourceEditor;
@@ -86,3 +93,4 @@ public class URLEditor extends PropertyEditorSupport {
 	}
 
 }
+*/

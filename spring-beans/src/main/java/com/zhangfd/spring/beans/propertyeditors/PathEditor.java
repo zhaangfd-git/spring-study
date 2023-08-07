@@ -12,7 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
+
 
 package com.zhangfd.spring.beans.propertyeditors;
 
@@ -28,6 +29,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 
+*/
 /**
  * Editor for {@code java.nio.file.Path}, to directly populate a Path
  * property instead of using a String property as bridge.
@@ -48,23 +50,28 @@ import java.nio.file.Paths;
  * @see org.springframework.core.io.ResourceLoader
  * @see FileEditor
  * @see URLEditor
- */
+ *//*
+
 public class PathEditor extends PropertyEditorSupport {
 
 	private final ResourceEditor resourceEditor;
 
 
-	/**
+	*/
+/**
 	 * Create a new PathEditor, using the default ResourceEditor underneath.
-	 */
+	 *//*
+
 	public PathEditor() {
 		this.resourceEditor = new ResourceEditor();
 	}
 
-	/**
+	*/
+/**
 	 * Create a new PathEditor, using the given ResourceEditor underneath.
 	 * @param resourceEditor the ResourceEditor to use
-	 */
+	 *//*
+
 	public PathEditor(ResourceEditor resourceEditor) {
 		Assert.notNull(resourceEditor, "ResourceEditor must not be null");
 		this.resourceEditor = resourceEditor;
@@ -116,3 +123,4 @@ public class PathEditor extends PropertyEditorSupport {
 	}
 
 }
+*/

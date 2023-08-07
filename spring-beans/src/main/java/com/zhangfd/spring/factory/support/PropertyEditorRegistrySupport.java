@@ -44,7 +44,9 @@ import java.util.TimeZone;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+import com.zhangfd.spring.beans.propertyeditors.*;
 import com.zhangfd.spring.core.convert.ConversionService;
+import com.zhangfd.spring.core.io.Resource;
 import com.zhangfd.spring.lang.Nullable;
 import com.zhangfd.spring.util.ClassUtils;
 import org.xml.sax.InputSource;
@@ -73,12 +75,14 @@ public class PropertyEditorRegistrySupport implements PropertyEditorRegistry {
 
 	private boolean configValueEditorsActive = false;
 
+	//spring默认的属性编辑器，
 	@Nullable
 	private Map<Class<?>, PropertyEditor> defaultEditors;
 
+	//默认的属性编辑器被重写的集合
 	@Nullable
 	private Map<Class<?>, PropertyEditor> overriddenDefaultEditors;
-
+	//自定义的属性编辑器集合
 	@Nullable
 	private Map<Class<?>, PropertyEditor> customEditors;
 
@@ -177,22 +181,22 @@ public class PropertyEditorRegistrySupport implements PropertyEditorRegistry {
 
 		// Simple editors, without parameterization capabilities.
 		// The JDK does not contain a default editor for any of these target types.
-		/*this.defaultEditors.put(Charset.class, new CharsetEditor());
+		this.defaultEditors.put(Charset.class, new CharsetEditor());
 		this.defaultEditors.put(Class.class, new ClassEditor());
 		this.defaultEditors.put(Class[].class, new ClassArrayEditor());
 		this.defaultEditors.put(Currency.class, new CurrencyEditor());
-		this.defaultEditors.put(File.class, new FileEditor());
-		this.defaultEditors.put(InputStream.class, new InputStreamEditor());
-		this.defaultEditors.put(InputSource.class, new InputSourceEditor());
+		//this.defaultEditors.put(File.class, new FileEditor());
+		//this.defaultEditors.put(InputStream.class, new InputStreamEditor());
+		//this.defaultEditors.put(InputSource.class, new InputSourceEditor());
 		this.defaultEditors.put(Locale.class, new LocaleEditor());
-		this.defaultEditors.put(Path.class, new PathEditor());
+		//this.defaultEditors.put(Path.class, new PathEditor());
 		this.defaultEditors.put(Pattern.class, new PatternEditor());
 		this.defaultEditors.put(Properties.class, new PropertiesEditor());
-		this.defaultEditors.put(Reader.class, new ReaderEditor());
-		this.defaultEditors.put(Resource[].class, new ResourceArrayPropertyEditor());
+		//this.defaultEditors.put(Reader.class, new ReaderEditor());
+		//this.defaultEditors.put(Resource[].class, new ResourceArrayPropertyEditor());
 		this.defaultEditors.put(TimeZone.class, new TimeZoneEditor());
-		this.defaultEditors.put(URI.class, new URIEditor());
-		this.defaultEditors.put(URL.class, new URLEditor());
+		//this.defaultEditors.put(URI.class, new URIEditor());
+		//this.defaultEditors.put(URL.class, new URLEditor());
 		this.defaultEditors.put(UUID.class, new UUIDEditor());
 		this.defaultEditors.put(ZoneId.class, new ZoneIdEditor());
 
@@ -240,7 +244,7 @@ public class PropertyEditorRegistrySupport implements PropertyEditorRegistry {
 			this.defaultEditors.put(short[].class, sae);
 			this.defaultEditors.put(int[].class, sae);
 			this.defaultEditors.put(long[].class, sae);
-		}*/
+		}
 	}
 
 	/**

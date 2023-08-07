@@ -101,6 +101,13 @@ public class TypeConverterDelegate {
 		return convertIfNecessary(propertyName, oldValue, newValue, requiredType, TypeDescriptor.valueOf(requiredType));
 	}
 
+	public static void main(String[] args) {
+		TypeConverterDelegate de = new TypeConverterDelegate(new PropertyEditorRegistrySupport(),null);
+		Integer integer = de.convertIfNecessary(null, null, "8", Integer.class, TypeDescriptor.valueOf(Integer.class));
+        System.out.println(integer);
+	}
+
+
 	/**
 	 * Convert the value to the required type (if necessary from a String),
 	 * for the specified property.

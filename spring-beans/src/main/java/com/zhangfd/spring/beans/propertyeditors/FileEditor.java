@@ -12,7 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
+
 
 package com.zhangfd.spring.beans.propertyeditors;
 
@@ -25,6 +26,7 @@ import com.zhangfd.spring.lang.Nullable;
 import com.zhangfd.spring.util.*;
 ;
 
+*/
 /**
  * Editor for {@code java.io.File}, to directly populate a File property
  * from a Spring resource location.
@@ -51,23 +53,28 @@ import com.zhangfd.spring.util.*;
  * @see org.springframework.core.io.ResourceLoader
  * @see URLEditor
  * @see InputStreamEditor
- */
+ *//*
+
 public class FileEditor extends PropertyEditorSupport {
 
 	private final ResourceEditor resourceEditor;
 
 
-	/**
+	*/
+/**
 	 * Create a new FileEditor, using a default ResourceEditor underneath.
-	 */
+	 *//*
+
 	public FileEditor() {
 		this.resourceEditor = new ResourceEditor();
 	}
 
-	/**
+	*/
+/**
 	 * Create a new FileEditor, using the given ResourceEditor underneath.
 	 * @param resourceEditor the ResourceEditor to use
-	 */
+	 *//*
+
 	public FileEditor(ResourceEditor resourceEditor) {
 		Assert.notNull(resourceEditor, "ResourceEditor must not be null");
 		this.resourceEditor = resourceEditor;
@@ -119,3 +126,4 @@ public class FileEditor extends PropertyEditorSupport {
 	}
 
 }
+*/

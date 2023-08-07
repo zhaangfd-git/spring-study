@@ -12,12 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
+
 
 package com.zhangfd.spring.beans.propertyeditors;
 
 import com.zhangfd.jcl.Log;
 import com.zhangfd.jcl.LogFactory;
+import com.zhangfd.spring.core.env.PropertyResolver;
 import com.zhangfd.spring.core.io.Resource;
 import com.zhangfd.spring.lang.Nullable;
 import com.zhangfd.spring.util.Assert;
@@ -31,6 +33,7 @@ import java.util.List;
 
 
 
+*/
 /**
  * Editor for {@link org.springframework.core.io.Resource} arrays, to
  * automatically convert {@code String} location patterns
@@ -51,7 +54,8 @@ import java.util.List;
  * @see org.springframework.core.io.Resource
  * @see ResourcePatternResolver
  * @see PathMatchingResourcePatternResolver
- */
+ *//*
+
 public class ResourceArrayPropertyEditor extends PropertyEditorSupport {
 
 	private static final Log logger = LogFactory.getLog(ResourceArrayPropertyEditor.class);
@@ -64,36 +68,42 @@ public class ResourceArrayPropertyEditor extends PropertyEditorSupport {
 	private final boolean ignoreUnresolvablePlaceholders;
 
 
-	/**
+	*/
+/**
 	 * Create a new ResourceArrayPropertyEditor with a default
 	 * {@link PathMatchingResourcePatternResolver} and {@link StandardEnvironment}.
 	 * @see PathMatchingResourcePatternResolver
 	 * @see Environment
-	 */
+	 *//*
+
 	public ResourceArrayPropertyEditor() {
 		this(new PathMatchingResourcePatternResolver(), null, true);
 	}
 
-	/**
+	*/
+/**
 	 * Create a new ResourceArrayPropertyEditor with the given {@link ResourcePatternResolver}
 	 * and {@link PropertyResolver} (typically an {@link Environment}).
 	 * @param resourcePatternResolver the ResourcePatternResolver to use
 	 * @param propertyResolver the PropertyResolver to use
-	 */
+	 *//*
+
 	public ResourceArrayPropertyEditor(
 			ResourcePatternResolver resourcePatternResolver, @Nullable PropertyResolver propertyResolver) {
 
 		this(resourcePatternResolver, propertyResolver, true);
 	}
 
-	/**
+	*/
+/**
 	 * Create a new ResourceArrayPropertyEditor with the given {@link ResourcePatternResolver}
 	 * and {@link PropertyResolver} (typically an {@link Environment}).
 	 * @param resourcePatternResolver the ResourcePatternResolver to use
 	 * @param propertyResolver the PropertyResolver to use
 	 * @param ignoreUnresolvablePlaceholders whether to ignore unresolvable placeholders
 	 * if no corresponding system property could be found
-	 */
+	 *//*
+
 	public ResourceArrayPropertyEditor(ResourcePatternResolver resourcePatternResolver,
 			@Nullable PropertyResolver propertyResolver, boolean ignoreUnresolvablePlaceholders) {
 
@@ -104,9 +114,11 @@ public class ResourceArrayPropertyEditor extends PropertyEditorSupport {
 	}
 
 
-	/**
+	*/
+/**
 	 * Treat the given text as a location pattern and convert it to a Resource array.
-	 */
+	 *//*
+
 	@Override
 	public void setAsText(String text) {
 		String pattern = resolvePath(text).trim();
@@ -119,10 +131,12 @@ public class ResourceArrayPropertyEditor extends PropertyEditorSupport {
 		}
 	}
 
-	/**
+	*/
+/**
 	 * Treat the given value as a collection or array and convert it to a Resource array.
 	 * Considers String elements as location patterns and takes Resource elements as-is.
-	 */
+	 *//*
+
 	@Override
 	public void setValue(Object value) throws IllegalArgumentException {
 		if (value instanceof Collection || (value instanceof Object[] && !(value instanceof Resource[]))) {
@@ -170,14 +184,16 @@ public class ResourceArrayPropertyEditor extends PropertyEditorSupport {
 		}
 	}
 
-	/**
+	*/
+/**
 	 * Resolve the given path, replacing placeholders with
 	 * corresponding system property values if necessary.
 	 * @param path the original file path
 	 * @return the resolved file path
 	 * @see PropertyResolver#resolvePlaceholders
 	 * @see PropertyResolver#resolveRequiredPlaceholders(String)
-	 */
+	 *//*
+
 	protected String resolvePath(String path) {
 		if (this.propertyResolver == null) {
 			this.propertyResolver = new StandardEnvironment();
@@ -187,3 +203,4 @@ public class ResourceArrayPropertyEditor extends PropertyEditorSupport {
 	}
 
 }
+*/

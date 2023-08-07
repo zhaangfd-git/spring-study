@@ -12,7 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
+
 
 package com.zhangfd.spring.beans.propertyeditors;
 
@@ -28,6 +29,7 @@ import java.net.URISyntaxException;
 
 
 
+*/
 /**
  * Editor for {@code java.net.URI}, to directly populate a URI property
  * instead of using a String property as bridge.
@@ -48,7 +50,8 @@ import java.net.URISyntaxException;
  * @since 2.0.2
  * @see java.net.URI
  * @see URLEditor
- */
+ *//*
+
 public class URIEditor extends PropertyEditorSupport {
 
 	@Nullable
@@ -58,43 +61,51 @@ public class URIEditor extends PropertyEditorSupport {
 
 
 
-	/**
+	*/
+/**
 	 * Create a new, encoding URIEditor, converting "classpath:" locations into
 	 * standard URIs (not trying to resolve them into physical resources).
-	 */
+	 *//*
+
 	public URIEditor() {
 		this(true);
 	}
 
-	/**
+	*/
+/**
 	 * Create a new URIEditor, converting "classpath:" locations into
 	 * standard URIs (not trying to resolve them into physical resources).
 	 * @param encode indicates whether Strings will be encoded or not
 	 * @since 3.0
-	 */
+	 *//*
+
 	public URIEditor(boolean encode) {
 		this.classLoader = null;
 		this.encode = encode;
 	}
 
-	/**
+	*/
+/**
 	 * Create a new URIEditor, using the given ClassLoader to resolve
 	 * "classpath:" locations into physical resource URLs.
 	 * @param classLoader the ClassLoader to use for resolving "classpath:" locations
 	 * (may be {@code null} to indicate the default ClassLoader)
-	 */
+	 *//*
+
 	public URIEditor(@Nullable ClassLoader classLoader) {
 		this(classLoader, true);
 	}
 
-	/**
+	*/
+/**
 	 * Create a new URIEditor, using the given ClassLoader to resolve
 	 * "classpath:" locations into physical resource URLs.
 	 * @param classLoader the ClassLoader to use for resolving "classpath:" locations
 	 * (may be {@code null} to indicate the default ClassLoader)
 	 * @param encode indicates whether Strings will be encoded or not
 	 * @since 3.0
-	 */
+	 *//*
+
 	public URIEditor(@Nullable ClassLoader classLoader, boolean encode) {
 		this.classLoader = (classLoader != null ? classLoader : ClassUtils.getDefaultClassLoader());
 		this.encode = encode;
@@ -129,13 +140,15 @@ public class URIEditor extends PropertyEditorSupport {
 		}
 	}
 
-	/**
+	*/
+/**
 	 * Create a URI instance for the given user-specified String value.
 	 * <p>The default implementation encodes the value into a RFC-2396 compliant URI.
 	 * @param value the value to convert into a URI instance
 	 * @return the URI instance
 	 * @throws java.net.URISyntaxException if URI conversion failed
-	 */
+	 *//*
+
 	protected URI createURI(String value) throws URISyntaxException {
 		int colonIndex = value.indexOf(':');
 		if (this.encode && colonIndex != -1) {
@@ -159,3 +172,4 @@ public class URIEditor extends PropertyEditorSupport {
 	}
 
 }
+*/

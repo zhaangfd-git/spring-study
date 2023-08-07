@@ -16,6 +16,7 @@
 
 package com.zhangfd.spring.core.convert;
 
+import com.zhangfd.spring.core.convert.converters.*;
 import com.zhangfd.spring.lang.Nullable;
 
 import java.nio.charset.Charset;
@@ -132,7 +133,7 @@ public class DefaultConversionService extends GenericConversionService {
 		converterRegistry.addConverter(new StreamConverter(conversionService));
 	}
 
-	private static void addScalarConverters(ConverterRegistry converterRegistry) {
+	private static void addScalarConverters(ConverterRegistry converterRegistry) {/*
 		converterRegistry.addConverterFactory(new NumberToNumberConverterFactory());
 
 		converterRegistry.addConverterFactory(new StringToNumberConverterFactory());
@@ -166,7 +167,7 @@ public class DefaultConversionService extends GenericConversionService {
 		converterRegistry.addConverter(new PropertiesToStringConverter());
 
 		converterRegistry.addConverter(new StringToUUIDConverter());
-		converterRegistry.addConverter(UUID.class, String.class, new ObjectToStringConverter());
+		converterRegistry.addConverter(UUID.class, String.class, new ObjectToStringConverter());*/
 	}
 
 }

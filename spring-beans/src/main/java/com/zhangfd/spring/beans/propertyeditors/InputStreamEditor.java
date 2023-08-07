@@ -12,7 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *//*
+
 
 package com.zhangfd.spring.beans.propertyeditors;
 
@@ -25,6 +26,7 @@ import java.io.IOException;
 
 
 
+*/
 /**
  * One-way PropertyEditor which can convert from a text String to a
  * {@code java.io.InputStream}, interpreting the given String as a
@@ -42,23 +44,28 @@ import java.io.IOException;
  * @see org.springframework.core.io.ResourceLoader
  * @see URLEditor
  * @see FileEditor
- */
+ *//*
+
 public class InputStreamEditor extends PropertyEditorSupport {
 
 	private final ResourceEditor resourceEditor;
 
 
-	/**
+	*/
+/**
 	 * Create a new InputStreamEditor, using the default ResourceEditor underneath.
-	 */
+	 *//*
+
 	public InputStreamEditor() {
 		this.resourceEditor = new ResourceEditor();
 	}
 
-	/**
+	*/
+/**
 	 * Create a new InputStreamEditor, using the given ResourceEditor underneath.
 	 * @param resourceEditor the ResourceEditor to use
-	 */
+	 *//*
+
 	public InputStreamEditor(ResourceEditor resourceEditor) {
 		Assert.notNull(resourceEditor, "ResourceEditor must not be null");
 		this.resourceEditor = resourceEditor;
@@ -77,10 +84,12 @@ public class InputStreamEditor extends PropertyEditorSupport {
 		}
 	}
 
-	/**
+	*/
+/**
 	 * This implementation returns {@code null} to indicate that
 	 * there is no appropriate text representation.
-	 */
+	 *//*
+
 	@Override
 	@Nullable
 	public String getAsText() {
@@ -88,3 +97,4 @@ public class InputStreamEditor extends PropertyEditorSupport {
 	}
 
 }
+*/

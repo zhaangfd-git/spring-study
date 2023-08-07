@@ -9,7 +9,6 @@ public class Test {
         String ss = "8";
         PropertyEditor propertiesEditor = new CustomNumberEditor(Integer.class, true);
         propertiesEditor.setAsText(ss);
-
         //类型转换
         Integer conut = (Integer) propertiesEditor.getValue();
 
