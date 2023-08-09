@@ -16,6 +16,8 @@
 
 package com.zhangfd.spring;
 
+import java.beans.BeanInfo;
+import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.security.AccessControlContext;
@@ -341,12 +343,6 @@ public class BeanWrapperImpl extends AbstractNestablePropertyAccessor implements
 	}
 
 
-	public static void main(String[] args) {
-       BeanWrapper beanWrapper = new BeanWrapperImpl();
-       Integer integer = beanWrapper.convertIfNecessary("8", Integer.class);
-
-       System.out.println(integer);
-	}
 
 
 }
