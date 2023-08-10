@@ -50,7 +50,7 @@ public class Test2 {
 
         MutablePropertyValues ps = new MutablePropertyValues();
         ps.addPropertyValue("param",param);
-        beanWrapper.setPropertyValues(ps);
+        beanWrapper.setPropertyValues(ps,true);
 
         Object wrappedInstance = beanWrapper.getWrappedInstance();
 

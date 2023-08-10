@@ -264,10 +264,12 @@ public abstract class AbstractNestablePropertyAccessor extends AbstractPropertyA
 
 	protected void setPropertyValue(PropertyTokenHolder tokens, PropertyValue pv) throws BeansException {
 		if (tokens.keys != null) {
+			//属性类型是 数组、集合 或 map
 			processKeyedProperty(tokens, pv);
 		}
 		else {
 			try {
+				//处理非集合属性赋值
 				processLocalProperty(tokens, pv);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -427,7 +429,7 @@ public abstract class AbstractNestablePropertyAccessor extends AbstractPropertyA
 		}
 		return propValue;
 	}
-
+    //处理费集合的属性赋值
 	private void processLocalProperty(PropertyTokenHolder tokens, PropertyValue pv) throws Exception {
 		PropertyHandler ph = getLocalPropertyHandler(tokens.actualName);
 		if (ph == null || !ph.isWritable()) {
@@ -469,11 +471,13 @@ public abstract class AbstractNestablePropertyAccessor extends AbstractPropertyA
 							}
 						}
 					}
+					//属性值的类型转换
 					valueToApply = convertForProperty(
 							tokens.canonicalName, oldValue, originalValue, ph.toTypeDescriptor());
 				}
 				pv.getOriginalPropertyValue().conversionNecessary = (valueToApply != originalValue);
 			}
+			//通过反射，给对象的属性赋值
 			ph.setValue(valueToApply);
 		/*}
 		catch (TypeMismatchException ex) {
@@ -972,6 +976,7 @@ public abstract class AbstractNestablePropertyAccessor extends AbstractPropertyA
 			if (keyStart != -1) {
 				int keyEnd = getPropertyNameKeyEnd(propertyName, keyStart + PROPERTY_KEY_PREFIX.length());
 				if (keyEnd != -1) {
+
 					if (actualName == null) {
 						actualName = propertyName.substring(0, keyStart);
 					}
