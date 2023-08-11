@@ -118,7 +118,7 @@ public class PropertyEditorRegistrySupport implements PropertyEditorRegistry {
 	 * Activate the default editors for this registry instance,
 	 * allowing for lazily registering default editors when needed.
 	 */
-	protected void registerDefaultEditors() {
+	public void registerDefaultEditors() {
 		this.defaultEditorsActive = true;
 	}
 

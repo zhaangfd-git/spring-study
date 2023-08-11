@@ -1,51 +1,35 @@
 package com.zhangfd.spring.test;
 
-import com.zhangfd.spring.*;
+import com.zhangfd.spring.BeanWrapper;
+import com.zhangfd.spring.BeanWrapperImpl;
+import com.zhangfd.spring.MutablePropertyValues;
+import com.zhangfd.spring.PropertyValue;
 import com.zhangfd.spring.util.StringUtils;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
+import java.beans.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Test2 {
+public class BeanWrapperImplTest {
 
 
     public static void main(String[] args) throws Exception {
-       /* BeanInfo beanInfo = Introspector.getBeanInfo(BeanInfoTest.class);
-        PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();*/
+        //test01();
 
-        //1、可以利用beanWrapper#convertIfNecessary方法做类型转换
         BeanWrapper beanWrapper = new BeanWrapperImpl(new BeanInfoTest());
-        //获取实例的所有属性
-        PropertyDescriptor[] propertyDescriptors02 = beanWrapper.getPropertyDescriptors();
-        //Class<?> wrappedClass = beanWrapper.getWrappedClass();
-
-        //获取包装对象具体的属性
-        for (PropertyDescriptor propertyDescriptor:propertyDescriptors02) {
-            if("class".equalsIgnoreCase(propertyDescriptor.getName()) || StringUtils.isEmpty(propertyDescriptor.getName())){
-                continue;
-            }
-            System.out.println(propertyDescriptor.getName());
-            System.out.println(propertyDescriptor.getPropertyType());
-            System.out.println(propertyDescriptor.getReadMethod());
-            System.out.println(propertyDescriptor.getWriteMethod());
-        }
-
         HashMap<String, List<Integer>> param = new HashMap<>();
         List<Integer>  tt = new ArrayList<>();
         tt.add(1);tt.add(2);param.put("test",tt);
         //给包装对象的属性赋值
-      //  beanWrapper.setPropertyValue("param",param);
+        //  beanWrapper.setPropertyValue("param",param);
 
         beanWrapper.setPropertyValue(new PropertyValue("age","18"));
 
         Map map = new HashMap<>();
         map.put("name", "zhangmm");
+        //可以把所有的属性值放入map中，自动帮做类型转换并赋值
         beanWrapper.setPropertyValues(map);
 
         MutablePropertyValues ps = new MutablePropertyValues();
@@ -58,8 +42,34 @@ public class Test2 {
         BeanWrapper beanWrapper01 = new BeanWrapperImpl();
         Integer integer = beanWrapper01.convertIfNecessary("8", Integer.class);
 
-        //还可以定义自己的属性编辑器
-        //beanWrapper01.registerCustomEditor();
+
+    }
+
+
+
+    public  static void test01() throws IntrospectionException {
+        BeanInfo beanInfo = Introspector.getBeanInfo(BeanInfoTest.class);
+        //1、获取实体的信息，
+        BeanDescriptor beanDescriptor = beanInfo.getBeanDescriptor();
+        beanDescriptor.getBeanClass();beanDescriptor.getName();
+
+        //2、获取实体下的属性信息，包含可读函数和可写函数
+        PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+        //获取包装对象具体的属性
+        for (PropertyDescriptor propertyDescriptor:propertyDescriptors) {
+            if("class".equalsIgnoreCase(propertyDescriptor.getName()) || StringUtils.isEmpty(propertyDescriptor.getName())){
+                continue;
+            }
+            //属性名
+            System.out.println(propertyDescriptor.getName());
+            //属性类型
+            System.out.println(propertyDescriptor.getPropertyType());
+            //属性对应的setter方法
+            System.out.println(propertyDescriptor.getReadMethod());
+            ////属性对应的getter方法
+            System.out.println(propertyDescriptor.getWriteMethod());
+
+        }
     }
 
 
