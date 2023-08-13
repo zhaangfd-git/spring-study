@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ResolvableTypeTest {
-
+    //ResolvableType对应java的Type类型，比Type使用更方便，功能也更强大。
     public static void main(String[] args) throws Exception {
         test2();
     }

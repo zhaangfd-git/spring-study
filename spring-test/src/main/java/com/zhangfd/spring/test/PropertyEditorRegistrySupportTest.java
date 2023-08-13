@@ -8,6 +8,8 @@ public class PropertyEditorRegistrySupportTest {
 
 
     public static void main(String[] args) {
+        //PropertyEditorRegistrySupport编写了各种自定义的属性编辑器，这里写一个String转换
+        //为Integer类型的场景
         PropertyEditorRegistrySupport  pe = new PropertyEditorRegistrySupport();
         pe.registerDefaultEditors();
         PropertyEditor defaultEditor = pe.getDefaultEditor(Integer.class);//获取Integer类型的转换器

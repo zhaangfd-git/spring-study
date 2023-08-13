@@ -12,7 +12,7 @@ public class TypeConverterDelegateTest {
     public static void main(String[] args) {
 
 
-
+        //把字符String类型转换为Integer类型
         TypeConverterDelegate de = new TypeConverterDelegate(new PropertyEditorRegistrySupport(),null);
         Integer integer = de.convertIfNecessary(null, null, "8", Integer.class, TypeDescriptor.valueOf(Integer.class));
         System.out.println(integer);

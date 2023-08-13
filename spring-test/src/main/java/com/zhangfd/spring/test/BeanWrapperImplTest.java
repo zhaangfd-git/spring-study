@@ -48,6 +48,7 @@ public class BeanWrapperImplTest {
 
 
     public  static void test01() throws IntrospectionException {
+        //通过Introspector获取给定类的属性
         BeanInfo beanInfo = Introspector.getBeanInfo(BeanInfoTest.class);
         //1、获取实体的信息，
         BeanDescriptor beanDescriptor = beanInfo.getBeanDescriptor();
