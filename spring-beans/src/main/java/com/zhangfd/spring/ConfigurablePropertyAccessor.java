@@ -2,9 +2,11 @@ package com.zhangfd.spring;
 
 import com.zhangfd.spring.beans.TypeConverter;
 import com.zhangfd.spring.core.convert.ConversionService;
+import com.zhangfd.spring.factory.support.PropertyAccessor;
+import com.zhangfd.spring.factory.support.PropertyEditorRegistry;
 import com.zhangfd.spring.lang.Nullable;
 
-public interface ConfigurablePropertyAccessor extends TypeConverter {
+public interface ConfigurablePropertyAccessor extends PropertyAccessor, PropertyEditorRegistry, TypeConverter {
 
     void setConversionService(@Nullable ConversionService conversionService);
 

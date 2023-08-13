@@ -1,18 +1,35 @@
 package com.zhangfd.spring;
 
+import com.zhangfd.jcl.Log;
+import com.zhangfd.jcl.LogFactory;
+import com.zhangfd.spring.core.KotlinDetector;
 import com.zhangfd.spring.exception.BeanInstantiationException;
+import com.zhangfd.spring.factory.config.DependencyDescriptor;
+import com.zhangfd.spring.lang.Nullable;
 import com.zhangfd.spring.util.Assert;
+import com.zhangfd.spring.util.ConcurrentReferenceHashMap;
 import com.zhangfd.spring.util.ReflectionUtils;
+import kotlin.jvm.JvmClassMappingKt;
+import kotlin.reflect.KFunction;
+import kotlin.reflect.KParameter;
+import kotlin.reflect.full.KClasses;
+import kotlin.reflect.jvm.KCallablesJvm;
+import kotlin.reflect.jvm.ReflectJvmMapping;
 
+import java.beans.PropertyEditor;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public abstract class BeanUtils {
+
+    private static final Log logger = LogFactory.getLog(BeanUtils.class);
+
+    private static final Set<Class<?>> unknownEditorTypes =
+            Collections.newSetFromMap(new ConcurrentReferenceHashMap<>(64));
 
 
 
@@ -85,5 +102,142 @@ public abstract class BeanUtils {
 
     }
 
+
+
+    @Nullable
+    public static PropertyEditor findEditorByConvention(@Nullable Class<?> targetType) {
+        if (targetType == null || targetType.isArray() || unknownEditorTypes.contains(targetType)) {
+            return null;
+        }
+        ClassLoader cl = targetType.getClassLoader();
+        if (cl == null) {
+            try {
+                cl = ClassLoader.getSystemClassLoader();
+                if (cl == null) {
+                    return null;
+                }
+            }
+            catch (Throwable ex) {
+                // e.g. AccessControlException on Google App Engine
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Could not access system ClassLoader: " + ex);
+                }
+                return null;
+            }
+        }
+        String targetTypeName = targetType.getName();
+        String editorName = targetTypeName + "Editor";
+        try {
+            Class<?> editorClass = cl.loadClass(editorName);
+            if (!PropertyEditor.class.isAssignableFrom(editorClass)) {
+                if (logger.isInfoEnabled()) {
+                    logger.info("Editor class [" + editorName +
+                            "] does not implement [java.beans.PropertyEditor] interface");
+                }
+                unknownEditorTypes.add(targetType);
+                return null;
+            }
+            return (PropertyEditor) instantiateClass(editorClass);
+        }
+        catch (ClassNotFoundException ex) {
+            if (logger.isTraceEnabled()) {
+                logger.trace("No property editor [" + editorName + "] found for type " +
+                        targetTypeName + " according to 'Editor' suffix convention");
+            }
+            unknownEditorTypes.add(targetType);
+            return null;
+        }
+    }
+
+    public static <T> T instantiateClass(Class<T> clazz) throws BeanInstantiationException {
+        Assert.notNull(clazz, "Class must not be null");
+        if (clazz.isInterface()) {
+            throw new BeanInstantiationException(clazz, "Specified class is an interface");
+        }
+        try {
+            return instantiateClass(clazz.getDeclaredConstructor());
+        }
+        catch (NoSuchMethodException ex) {
+            Constructor<T> ctor = findPrimaryConstructor(clazz);
+            if (ctor != null) {
+                return instantiateClass(ctor);
+            }
+            throw new BeanInstantiationException(clazz, "No default constructor found", ex);
+        }
+        catch (LinkageError err) {
+            throw new BeanInstantiationException(clazz, "Unresolvable class definition", err);
+        }
+    }
+
+    @Nullable
+    public static <T> Constructor<T> findPrimaryConstructor(Class<T> clazz) {
+        Assert.notNull(clazz, "Class must not be null");
+        if (KotlinDetector.isKotlinReflectPresent() && KotlinDetector.isKotlinType(clazz)) {
+            Constructor<T> kotlinPrimaryConstructor = KotlinDelegate.findPrimaryConstructor(clazz);
+            if (kotlinPrimaryConstructor != null) {
+                return kotlinPrimaryConstructor;
+            }
+        }
+        return null;
+    }
+
+    private static class KotlinDelegate {
+
+        /**
+         * Retrieve the Java constructor corresponding to the Kotlin primary constructor, if any.
+         * @param clazz the {@link Class} of the Kotlin class
+         * @see <a href="https://kotlinlang.org/docs/reference/classes.html#constructors">
+         * https://kotlinlang.org/docs/reference/classes.html#constructors</a>
+         */
+        @Nullable
+        public static <T> Constructor<T> findPrimaryConstructor(Class<T> clazz) {
+            try {
+                KFunction<T> primaryCtor = KClasses.getPrimaryConstructor(JvmClassMappingKt.getKotlinClass(clazz));
+                if (primaryCtor == null) {
+                    return null;
+                }
+                Constructor<T> constructor = ReflectJvmMapping.getJavaConstructor(primaryCtor);
+                if (constructor == null) {
+                    throw new IllegalStateException(
+                            "Failed to find Java constructor for Kotlin primary constructor: " + clazz.getName());
+                }
+                return constructor;
+            }
+            catch (UnsupportedOperationException ex) {
+                return null;
+            }
+        }
+
+        /**
+         * Instantiate a Kotlin class using the provided constructor.
+         * @param ctor the constructor of the Kotlin class to instantiate
+         * @param args the constructor arguments to apply
+         * (use {@code null} for unspecified parameter if needed)
+         */
+        public static <T> T instantiateClass(Constructor<T> ctor, Object... args)
+                throws IllegalAccessException, InvocationTargetException, InstantiationException {
+
+            KFunction<T> kotlinConstructor = ReflectJvmMapping.getKotlinFunction(ctor);
+            if (kotlinConstructor == null) {
+                return ctor.newInstance(args);
+            }
+
+            if ((!Modifier.isPublic(ctor.getModifiers()) || !Modifier.isPublic(ctor.getDeclaringClass().getModifiers()))) {
+                KCallablesJvm.setAccessible(kotlinConstructor, true);
+            }
+
+            List<KParameter> parameters = kotlinConstructor.getParameters();
+            Map<KParameter, Object> argParameters = new HashMap<>(parameters.size());
+            Assert.isTrue(args.length <= parameters.size(),
+                    "Number of provided arguments should be less of equals than number of constructor parameters");
+            for (int i = 0 ; i < args.length ; i++) {
+                if (!(parameters.get(i).isOptional() && args[i] == null)) {
+                    argParameters.put(parameters.get(i), args[i]);
+                }
+            }
+            return kotlinConstructor.callBy(argParameters);
+        }
+
+    }
 
 }

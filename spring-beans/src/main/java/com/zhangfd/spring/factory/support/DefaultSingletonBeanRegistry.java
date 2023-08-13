@@ -49,6 +49,10 @@ public class DefaultSingletonBeanRegistry  extends SimpleAliasRegistry implement
 
 
 
+    /** Names of beans currently excluded from in creation checks. */
+    private final Set<String> inCreationCheckExclusions =
+            Collections.newSetFromMap(new ConcurrentHashMap<>(16));
+
 
 
     protected void onSuppressedException(Exception ex) {
@@ -170,7 +174,10 @@ public class DefaultSingletonBeanRegistry  extends SimpleAliasRegistry implement
     public boolean isSingletonCurrentlyInCreation(String beanName) {
         return this.singletonsCurrentlyInCreation.contains(beanName);
     }
-
+    public boolean isCurrentlyInCreation(String beanName) {
+        Assert.notNull(beanName, "Bean name must not be null");
+        return (!this.inCreationCheckExclusions.contains(beanName) && isActuallyInCreation(beanName));
+    }
 
     public void registerDependentBean(String beanName, String dependentBeanName) {
         String canonicalName = canonicalName(beanName);

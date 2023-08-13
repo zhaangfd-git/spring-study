@@ -31,7 +31,7 @@ import com.zhangfd.spring.lang.Nullable;
  * @author Juergen Hoeller
  */
 @SuppressWarnings("serial")
-public abstract class BeansException extends NestedRuntimeException {
+public class BeansException extends NestedRuntimeException {
 
 	/**
 	 * Create a new BeansException with the specified message.
