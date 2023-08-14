@@ -72,6 +72,14 @@ public class DefaultSingletonBeanRegistry  extends SimpleAliasRegistry implement
         this.suppressedExceptions = suppressedExceptions;
     }
 
+    protected void removeSingleton(String beanName) {
+        synchronized (this.singletonObjects) {
+            this.singletonObjects.remove(beanName);
+            this.singletonFactories.remove(beanName);
+            this.earlySingletonObjects.remove(beanName);
+            this.registeredSingletons.remove(beanName);
+        }
+    }
 
     @Override
     public void registerSingleton(String beanName, Object singletonObject) {
@@ -87,7 +95,7 @@ public class DefaultSingletonBeanRegistry  extends SimpleAliasRegistry implement
         }
     }
 
-    protected void addSingleton(String beanName, Object singletonObject) {
+    public void addSingleton(String beanName, Object singletonObject) {
         synchronized (this.singletonObjects) {
             this.singletonObjects.put(beanName, singletonObject);
             this.singletonFactories.remove(beanName);
@@ -96,6 +104,16 @@ public class DefaultSingletonBeanRegistry  extends SimpleAliasRegistry implement
         }
     }
 
+    protected void addSingletonFactory(String beanName, ObjectFactory<?> singletonFactory) {
+        Assert.notNull(singletonFactory, "Singleton factory must not be null");
+        synchronized (this.singletonObjects) {
+            if (!this.singletonObjects.containsKey(beanName)) {
+                this.singletonFactories.put(beanName, singletonFactory);
+                this.earlySingletonObjects.remove(beanName);
+                this.registeredSingletons.add(beanName);
+            }
+        }
+    }
 
     @Override
     @Nullable

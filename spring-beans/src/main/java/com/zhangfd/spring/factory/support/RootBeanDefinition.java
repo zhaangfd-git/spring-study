@@ -8,6 +8,7 @@ import com.zhangfd.spring.lang.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
+import java.util.Set;
 
 public class RootBeanDefinition  extends  AbstractBeanDefinition   {
 
@@ -62,6 +63,17 @@ public class RootBeanDefinition  extends  AbstractBeanDefinition   {
     @Nullable
     volatile ResolvableType factoryMethodReturnType;
 
+
+    final Object postProcessingLock = new Object();
+    /** Package-visible field that indicates MergedBeanDefinitionPostProcessor having been applied. */
+    boolean postProcessed = false;
+
+    @Nullable
+    private Set<String> externallyManagedInitMethods;
+
+    //允许缓存
+    boolean allowCaching = true;
+
     public RootBeanDefinition() {
         super();
     }
@@ -87,6 +99,13 @@ public class RootBeanDefinition  extends  AbstractBeanDefinition   {
     public void setParentName(@Nullable String parentName) {
         if (parentName != null) {
             throw new IllegalArgumentException("Root bean cannot be changed into a child bean with parent reference");
+        }
+    }
+
+    public boolean isExternallyManagedInitMethod(String initMethod) {
+        synchronized (this.postProcessingLock) {
+            return (this.externallyManagedInitMethods != null &&
+                    this.externallyManagedInitMethods.contains(initMethod));
         }
     }
 

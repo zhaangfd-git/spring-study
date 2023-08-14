@@ -75,6 +75,7 @@ public abstract class AbstractBeanFactory  extends  FactoryBeanRegistrySupport i
         registerCustomEditors(bw);
     }
 
+
     protected void registerCustomEditors(PropertyEditorRegistry registry) {
         PropertyEditorRegistrySupport registrySupport =
                 (registry instanceof PropertyEditorRegistrySupport ? (PropertyEditorRegistrySupport) registry : null);
@@ -249,6 +250,17 @@ public abstract class AbstractBeanFactory  extends  FactoryBeanRegistrySupport i
             }
         }
         return ResolvableType.NONE;
+    }
+
+
+    protected boolean requiresDestruction(Object bean, RootBeanDefinition mbd) {
+        return (bean.getClass() != NullBean.class &&
+                (DisposableBeanAdapter.hasDestroyMethod(bean, mbd) || (hasDestructionAwareBeanPostProcessors() &&
+                        DisposableBeanAdapter.hasApplicableProcessors(bean, getBeanPostProcessors()))));
+    }
+
+    protected boolean hasDestructionAwareBeanPostProcessors() {
+        return this.hasDestructionAwareBeanPostProcessors;
     }
 
 

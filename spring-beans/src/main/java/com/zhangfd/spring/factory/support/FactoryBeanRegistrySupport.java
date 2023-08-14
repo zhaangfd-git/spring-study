@@ -37,6 +37,15 @@ public abstract  class FactoryBeanRegistrySupport extends  DefaultSingletonBeanR
         }
     }
 
+    @Override
+    protected void removeSingleton(String beanName) {
+        synchronized (getSingletonMutex()) {
+            super.removeSingleton(beanName);
+            this.factoryBeanObjectCache.remove(beanName);
+        }
+    }
+
+
     protected AccessControlContext getAccessControlContext() {
         return AccessController.getContext();
     }

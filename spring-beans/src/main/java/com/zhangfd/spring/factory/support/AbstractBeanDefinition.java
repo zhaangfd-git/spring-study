@@ -37,6 +37,9 @@ public abstract class AbstractBeanDefinition   extends BeanMetadataAttributeAcce
      */
     public static final String SCOPE_DEFAULT = "";
 
+
+    private boolean enforceInitMethod = true;
+
     /**
      * Constant that indicates no external autowiring at all.
      * @see #setAutowireMode
@@ -202,6 +205,12 @@ public abstract class AbstractBeanDefinition   extends BeanMetadataAttributeAcce
     protected AbstractBeanDefinition() {
         this(null, null);
     }
+
+
+    public boolean isEnforceInitMethod() {
+        return this.enforceInitMethod;
+    }
+
 
     /**
      * Create a new AbstractBeanDefinition with the given

@@ -2,11 +2,14 @@ package com.zhangfd.spring;
 
 import com.zhangfd.jcl.Log;
 import com.zhangfd.jcl.LogFactory;
+import com.zhangfd.spring.beans.GenericTypeAwarePropertyDescriptor;
 import com.zhangfd.spring.core.KotlinDetector;
+import com.zhangfd.spring.core.MethodParameter;
 import com.zhangfd.spring.exception.BeanInstantiationException;
 import com.zhangfd.spring.factory.config.DependencyDescriptor;
 import com.zhangfd.spring.lang.Nullable;
 import com.zhangfd.spring.util.Assert;
+import com.zhangfd.spring.util.ClassUtils;
 import com.zhangfd.spring.util.ConcurrentReferenceHashMap;
 import com.zhangfd.spring.util.ReflectionUtils;
 import kotlin.jvm.JvmClassMappingKt;
@@ -16,12 +19,17 @@ import kotlin.reflect.full.KClasses;
 import kotlin.reflect.jvm.KCallablesJvm;
 import kotlin.reflect.jvm.ReflectJvmMapping;
 
+import java.beans.PropertyDescriptor;
 import java.beans.PropertyEditor;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.URI;
+import java.net.URL;
 import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;
+import java.time.temporal.Temporal;
 import java.util.*;
 
 public abstract class BeanUtils {
@@ -45,6 +53,61 @@ public abstract class BeanUtils {
         DEFAULT_TYPE_VALUES = Collections.unmodifiableMap(values);
     }
 
+    @Nullable
+    public static Method findMethod(Class<?> clazz, String methodName, Class<?>... paramTypes) {
+        try {
+            return clazz.getMethod(methodName, paramTypes);
+        }
+        catch (NoSuchMethodException ex) {
+            return findDeclaredMethod(clazz, methodName, paramTypes);
+        }
+    }
+
+    @Nullable
+    public static Method findDeclaredMethod(Class<?> clazz, String methodName, Class<?>... paramTypes) {
+        try {
+            return clazz.getDeclaredMethod(methodName, paramTypes);
+        }
+        catch (NoSuchMethodException ex) {
+            if (clazz.getSuperclass() != null) {
+                return findDeclaredMethod(clazz.getSuperclass(), methodName, paramTypes);
+            }
+            return null;
+        }
+    }
+
+
+    public static MethodParameter getWriteMethodParameter(PropertyDescriptor pd) {
+        if (pd instanceof GenericTypeAwarePropertyDescriptor) {
+            return new MethodParameter(((GenericTypeAwarePropertyDescriptor) pd).getWriteMethodParameter());
+        }
+        else {
+            Method writeMethod = pd.getWriteMethod();
+            Assert.state(writeMethod != null, "No write method available");
+            return new MethodParameter(writeMethod, 0);
+        }
+    }
+
+
+
+    public static boolean isSimpleProperty(Class<?> type) {
+        Assert.notNull(type, "'type' must not be null");
+        return isSimpleValueType(type) || (type.isArray() && isSimpleValueType(type.getComponentType()));
+    }
+
+    public static boolean isSimpleValueType(Class<?> type) {
+        return (Void.class != type && void.class != type &&
+                (ClassUtils.isPrimitiveOrWrapper(type) ||
+                        Enum.class.isAssignableFrom(type) ||
+                        CharSequence.class.isAssignableFrom(type) ||
+                        Number.class.isAssignableFrom(type) ||
+                        Date.class.isAssignableFrom(type) ||
+                        Temporal.class.isAssignableFrom(type) ||
+                        URI.class == type ||
+                        URL.class == type ||
+                        Locale.class == type ||
+                        Class.class == type));
+    }
 
     /**
      * 给定构造方法及参数，通过反射创建实例
