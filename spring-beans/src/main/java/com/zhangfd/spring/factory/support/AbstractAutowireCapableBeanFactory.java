@@ -292,6 +292,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     }
 
 
+
     protected void registerDisposableBeanIfNecessary(String beanName, Object bean, RootBeanDefinition mbd) {
         AccessControlContext acc = (System.getSecurityManager() != null ? getAccessControlContext() : null);
         if (!mbd.isPrototype() && requiresDestruction(bean, mbd)) {
