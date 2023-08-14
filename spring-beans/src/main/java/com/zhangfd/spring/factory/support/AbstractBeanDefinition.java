@@ -23,6 +23,8 @@ public abstract class AbstractBeanDefinition   extends BeanMetadataAttributeAcce
     // 运行时方法被重写，说明使用了cglib代理，后面会据此判断是否是cglib代理生成的实体类
     private MethodOverrides methodOverrides = new MethodOverrides();
 
+    public static final String INFER_METHOD = "(inferred)";
+
 
     private boolean lenientConstructorResolution = true;
 
@@ -211,6 +213,10 @@ public abstract class AbstractBeanDefinition   extends BeanMetadataAttributeAcce
         return this.enforceInitMethod;
     }
 
+    private boolean enforceDestroyMethod = true;
+    public boolean isEnforceDestroyMethod() {
+        return this.enforceDestroyMethod;
+    }
 
     /**
      * Create a new AbstractBeanDefinition with the given

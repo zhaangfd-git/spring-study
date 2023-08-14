@@ -1,6 +1,7 @@
 package com.zhangfd.spring.factory.support;
 
 import com.zhangfd.spring.core.SimpleAliasRegistry;
+import com.zhangfd.spring.factory.DisposableBean;
 import com.zhangfd.spring.factory.ObjectFactory;
 import com.zhangfd.spring.factory.config.SingletonBeanRegistry;
 import com.zhangfd.spring.lang.Nullable;
@@ -54,6 +55,13 @@ public class DefaultSingletonBeanRegistry  extends SimpleAliasRegistry implement
             Collections.newSetFromMap(new ConcurrentHashMap<>(16));
 
 
+    private final Map<String, Object> disposableBeans = new LinkedHashMap<>();
+
+    public void registerDisposableBean(String beanName, DisposableBean bean) {
+        synchronized (this.disposableBeans) {
+            this.disposableBeans.put(beanName, bean);
+        }
+    }
 
     protected void onSuppressedException(Exception ex) {
         synchronized (this.singletonObjects) {

@@ -74,6 +74,10 @@ public class RootBeanDefinition  extends  AbstractBeanDefinition   {
     //允许缓存
     boolean allowCaching = true;
 
+    @Nullable
+    private Set<String> externallyManagedDestroyMethods;
+
+
     public RootBeanDefinition() {
         super();
     }
@@ -106,6 +110,13 @@ public class RootBeanDefinition  extends  AbstractBeanDefinition   {
         synchronized (this.postProcessingLock) {
             return (this.externallyManagedInitMethods != null &&
                     this.externallyManagedInitMethods.contains(initMethod));
+        }
+    }
+
+    public boolean isExternallyManagedDestroyMethod(String destroyMethod) {
+        synchronized (this.postProcessingLock) {
+            return (this.externallyManagedDestroyMethods != null &&
+                    this.externallyManagedDestroyMethods.contains(destroyMethod));
         }
     }
 

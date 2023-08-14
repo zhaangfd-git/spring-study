@@ -47,6 +47,9 @@ public abstract class AbstractBeanFactory  extends  FactoryBeanRegistrySupport i
     private ClassLoader tempClassLoader;
 
 
+    public final Map<String, Scope> scopes = new LinkedHashMap<>(8);
+
+
     @Nullable
     private BeanExpressionResolver beanExpressionResolver;
 
@@ -589,7 +592,6 @@ public abstract class AbstractBeanFactory  extends  FactoryBeanRegistrySupport i
         return this.beanExpressionResolver.evaluate(value, new BeanExpressionContext(this, scope));
     }
 
-    private final Map<String, Scope> scopes = new LinkedHashMap<>(8);
 
     @Override
     @Nullable
