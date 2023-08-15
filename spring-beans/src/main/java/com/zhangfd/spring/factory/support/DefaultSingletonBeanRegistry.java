@@ -103,6 +103,12 @@ public class DefaultSingletonBeanRegistry  extends SimpleAliasRegistry implement
         }
     }
 
+    /**
+     * 1级缓存赋值
+     * 2级、3级缓存删除
+     * @param beanName
+     * @param singletonObject
+     */
     public void addSingleton(String beanName, Object singletonObject) {
         synchronized (this.singletonObjects) {
             this.singletonObjects.put(beanName, singletonObject);
@@ -112,6 +118,12 @@ public class DefaultSingletonBeanRegistry  extends SimpleAliasRegistry implement
         }
     }
 
+    /**
+     * 放入三级缓存，
+     * 1、2级缓存删除值
+     * @param beanName
+     * @param singletonFactory
+     */
     protected void addSingletonFactory(String beanName, ObjectFactory<?> singletonFactory) {
         Assert.notNull(singletonFactory, "Singleton factory must not be null");
         synchronized (this.singletonObjects) {

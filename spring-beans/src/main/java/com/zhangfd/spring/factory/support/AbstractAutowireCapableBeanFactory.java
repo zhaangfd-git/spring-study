@@ -185,6 +185,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         synchronized (mbd.postProcessingLock) {
             if (!mbd.postProcessed) {
                 try {
+                    //调用MergedBeanDefinitionPostProcessor接口的实现类
                     applyMergedBeanDefinitionPostProcessors(mbd, beanType, beanName);
                 }
                 catch (Throwable ex) {
@@ -205,6 +206,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                 logger.trace("Eagerly caching bean '" + beanName +
                         "' to allow for resolving potential circular references");
             }
+            //调用SmartInstantiationAwareBeanPostProcessor方法
+            //说明这个实例需要循环依赖，创建的实例先放入三级缓存，若1、2级缓存有值则删除。
             addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean));
         }
 
@@ -321,8 +324,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                 invokeAwareMethods(beanName, bean);
                 return null;
             }, getAccessControlContext());
-        }
-        else {
+        }else {
             invokeAwareMethods(beanName, bean);
         }
 
@@ -498,8 +500,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             }
         }
 
-        PropertyValues pvs = (mbd.hasPropertyValues() ? mbd.getPropertyValues() : null);
 
+        PropertyValues pvs = (mbd.hasPropertyValues() ? mbd.getPropertyValues() : null);
+        //查找类型，根据name还是type
         int resolvedAutowireMode = mbd.getResolvedAutowireMode();
         if (resolvedAutowireMode == AUTOWIRE_BY_NAME || resolvedAutowireMode == AUTOWIRE_BY_TYPE) {
             MutablePropertyValues newPvs = new MutablePropertyValues(pvs);
@@ -514,6 +517,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             pvs = newPvs;
         }
 
+        //是否有InstantiationAwareBeanPostProcessor的实现类加入spring容器
         boolean hasInstAwareBpps = hasInstantiationAwareBeanPostProcessors();
         boolean needsDepCheck = (mbd.getDependencyCheck() != AbstractBeanDefinition.DEPENDENCY_CHECK_NONE);
 
@@ -709,7 +713,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
     protected void autowireByType(
             String beanName, AbstractBeanDefinition mbd, BeanWrapper bw, MutablePropertyValues pvs) {
-
+        //是否有自定义的类型转换器
         TypeConverter converter = getCustomTypeConverter();
         if (converter == null) {
             converter = bw;
