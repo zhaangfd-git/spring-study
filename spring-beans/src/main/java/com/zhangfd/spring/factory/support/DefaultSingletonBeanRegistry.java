@@ -29,6 +29,7 @@ public class DefaultSingletonBeanRegistry  extends SimpleAliasRegistry implement
     /** 存放所有的单例bean的名字 */
     private final Set<String> registeredSingletons = new LinkedHashSet<>(256);
 
+    /** 记录每个bean，需要依赖的其他bean集合 */
     private final Map<String, Set<String>> dependentBeanMap = new ConcurrentHashMap<>(64);
 
     private final Map<String, Set<String>> dependenciesForBeanMap = new ConcurrentHashMap<>(64);
@@ -55,7 +56,7 @@ public class DefaultSingletonBeanRegistry  extends SimpleAliasRegistry implement
     private final Set<String> inCreationCheckExclusions =
             Collections.newSetFromMap(new ConcurrentHashMap<>(16));
 
-
+   //记录需要被dispose的bean，key是bean的名字，value是对应的实例对象
     private final Map<String, Object> disposableBeans = new LinkedHashMap<>();
 
 

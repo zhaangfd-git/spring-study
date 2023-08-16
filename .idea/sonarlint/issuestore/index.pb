@@ -159,14 +159,8 @@ Xspring-beans/src/main/java/com/zhangfd/spring/factory/config/BeanExpressionReso
 Rspring-beans/src/main/java/com/zhangfd/spring/factory/support/MethodOverrides.java,4\f\4f33cbea142d84e16a04fb7288113c5ba8bdc24d
 ‹
 [spring-beans/src/main/java/com/zhangfd/spring/factory/config/ConstructorArgumentValues.java,6\0\605664dcdba0d8367cb3566c994fa1e3c054bd36
-t
-Dspring-core/src/main/java/com/zhangfd/spring/core/AliasRegistry.java,8\2\8234fd948cef11ac5b58b1d397add820151dcc02
 †
 Vspring-beans/src/main/java/com/zhangfd/spring/factory/config/BeanDefinitionHolder.java,f\7\f7eb451c9f2b443b4fa7b226d424b9ae8c195f29
-‡
-Wspring-beans/src/main/java/com/zhangfd/spring/factory/config/SingletonBeanRegistry.java,7\7\776ae25ab2da21e47bf1d60c8b72ba58bec52a64
-x
-Hspring-beans/src/main/java/com/zhangfd/spring/factory/ObjectFactory.java,b\d\bd061bb0938c3bd32b9eea2291e9b6508ceea754
 w
 Gspring-core/src/main/java/com/zhangfd/spring/core/NamedThreadLocal.java,b\4\b4bc1cba9f74a90df87a79c18bd7b9f6bcaee1ca
 š
@@ -495,8 +489,6 @@ Hspring-beans/src/main/java/com/zhangfd/spring/factory/BeanNameAware.java,8\3\8
 dspring-beans/src/main/java/com/zhangfd/spring/factory/support/MergedBeanDefinitionPostProcessor.java,1\0\106603381ef49d37e32d1459cdd6e5d43d8d3d68
 p
 @spring-beans/src/main/java/com/zhangfd/spring/factory/Aware.java,0\f\0f8c2642a3cd409ab4560e7c03b08be33b5ddde4
-y
-Ispring-beans/src/main/java/com/zhangfd/spring/factory/DisposableBean.java,4\5\4560871f59afc04e4581a88478d92f1e61fe432d
 w
 Gspring-beans/src/main/java/com/zhangfd/spring/factory/config/Scope.java,0\6\06b10a4d7f19a66be76b48bd8fa602970fec8767
 ”
