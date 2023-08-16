@@ -92,4 +92,7 @@ public interface AutowireCapableBeanFactory  extends BeanFactory {
      */
     Object applyBeanPostProcessorsAfterInitialization(Object existingBean, String beanName)
             throws BeansException;
+
+    <T> NamedBeanHolder<T> resolveNamedBean(Class<T> requiredType) throws BeansException;
+
 }

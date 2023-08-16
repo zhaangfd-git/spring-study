@@ -5,6 +5,7 @@ import com.zhangfd.spring.core.ResolvableType;
 import com.zhangfd.spring.exception.BeanDefinitionStoreException;
 import com.zhangfd.spring.exception.NoSuchBeanDefinitionException;
 import com.zhangfd.spring.exception.NoUniqueBeanDefinitionException;
+import com.zhangfd.spring.factory.support.ObjectProvider;
 import com.zhangfd.spring.lang.Nullable;
 
 public interface BeanFactory {
@@ -258,5 +259,11 @@ public interface BeanFactory {
      * @see #getBean
      */
     String[] getAliases(String name);
+
+
+    <T> ObjectProvider<T> getBeanProvider(ResolvableType requiredType);
+
+    <T> ObjectProvider<T> getBeanProvider(Class<T> requiredType);
+
 
 }

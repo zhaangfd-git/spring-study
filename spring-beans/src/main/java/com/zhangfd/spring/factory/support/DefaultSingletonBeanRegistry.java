@@ -1,6 +1,7 @@
 package com.zhangfd.spring.factory.support;
 
 import com.zhangfd.spring.core.SimpleAliasRegistry;
+import com.zhangfd.spring.exception.BeanCreationException;
 import com.zhangfd.spring.factory.DisposableBean;
 import com.zhangfd.spring.factory.ObjectFactory;
 import com.zhangfd.spring.factory.config.SingletonBeanRegistry;
@@ -57,6 +58,16 @@ public class DefaultSingletonBeanRegistry  extends SimpleAliasRegistry implement
 
     private final Map<String, Object> disposableBeans = new LinkedHashMap<>();
 
+
+
+    /** Flag that indicates whether we're currently within destroySingletons. */
+    private boolean singletonsCurrentlyInDestruction = false;
+
+
+
+    /** Map between containing bean names: bean name to Set of bean names that the bean contains. */
+    private final Map<String, Set<String>> containedBeanMap = new ConcurrentHashMap<>(16);
+
     public void registerDisposableBean(String beanName, DisposableBean bean) {
         synchronized (this.disposableBeans) {
             this.disposableBeans.put(beanName, bean);
@@ -69,6 +80,44 @@ public class DefaultSingletonBeanRegistry  extends SimpleAliasRegistry implement
                 this.suppressedExceptions.add(ex);
             }
         }
+    }
+
+    protected boolean isDependent(String beanName, String dependentBeanName) {
+        synchronized (this.dependentBeanMap) {
+            return isDependent(beanName, dependentBeanName, null);
+        }
+    }
+
+    private boolean isDependent(String beanName, String dependentBeanName, @Nullable Set<String> alreadySeen) {
+        if (alreadySeen != null && alreadySeen.contains(beanName)) {
+            return false;
+        }
+        String canonicalName = canonicalName(beanName);
+        Set<String> dependentBeans = this.dependentBeanMap.get(canonicalName);
+        if (dependentBeans == null) {
+            return false;
+        }
+        if (dependentBeans.contains(dependentBeanName)) {
+            return true;
+        }
+        for (String transitiveDependency : dependentBeans) {
+            if (alreadySeen == null) {
+                alreadySeen = new HashSet<>();
+            }
+            alreadySeen.add(beanName);
+            if (isDependent(transitiveDependency, dependentBeanName, alreadySeen)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Determine whether a dependent bean has been registered for the given name.
+     * @param beanName the name of the bean to check
+     */
+    protected boolean hasDependentBean(String beanName) {
+        return this.dependentBeanMap.containsKey(beanName);
     }
 
     @Nullable
@@ -160,6 +209,119 @@ public class DefaultSingletonBeanRegistry  extends SimpleAliasRegistry implement
         }
     }
 
+    public void destroySingletons() {
+        if (logger.isTraceEnabled()) {
+            logger.trace("Destroying singletons in " + this);
+        }
+        synchronized (this.singletonObjects) {
+            this.singletonsCurrentlyInDestruction = true;
+        }
+
+        String[] disposableBeanNames;
+        synchronized (this.disposableBeans) {
+            disposableBeanNames = StringUtils.toStringArray(this.disposableBeans.keySet());
+        }
+        for (int i = disposableBeanNames.length - 1; i >= 0; i--) {
+            destroySingleton(disposableBeanNames[i]);
+        }
+
+        this.containedBeanMap.clear();
+        this.dependentBeanMap.clear();
+        this.dependenciesForBeanMap.clear();
+
+        clearSingletonCache();
+    }
+
+    /**
+     * Clear all cached singleton instances in this registry.
+     * @since 4.3.15
+     */
+    protected void clearSingletonCache() {
+        synchronized (this.singletonObjects) {
+            this.singletonObjects.clear();
+            this.singletonFactories.clear();
+            this.earlySingletonObjects.clear();
+            this.registeredSingletons.clear();
+            this.singletonsCurrentlyInDestruction = false;
+        }
+    }
+
+    public void destroySingleton(String beanName) {
+        // Remove a registered singleton of the given name, if any.
+        removeSingleton(beanName);
+
+        // Destroy the corresponding DisposableBean instance.
+        DisposableBean disposableBean;
+        synchronized (this.disposableBeans) {
+            disposableBean = (DisposableBean) this.disposableBeans.remove(beanName);
+        }
+        destroyBean(beanName, disposableBean);
+    }
+
+
+
+    /**
+     * Destroy the given bean. Must destroy beans that depend on the given
+     * bean before the bean itself. Should not throw any exceptions.
+     * @param beanName the name of the bean
+     * @param bean the bean instance to destroy
+     */
+    protected void destroyBean(String beanName, @Nullable DisposableBean bean) {
+        // Trigger destruction of dependent beans first...
+        Set<String> dependencies;
+        synchronized (this.dependentBeanMap) {
+            // Within full synchronization in order to guarantee a disconnected Set
+            dependencies = this.dependentBeanMap.remove(beanName);
+        }
+        if (dependencies != null) {
+            if (logger.isTraceEnabled()) {
+                logger.trace("Retrieved dependent beans for bean '" + beanName + "': " + dependencies);
+            }
+            for (String dependentBeanName : dependencies) {
+                destroySingleton(dependentBeanName);
+            }
+        }
+
+        // Actually destroy the bean now...
+        if (bean != null) {
+            try {
+                bean.destroy();
+            }
+            catch (Throwable ex) {
+                if (logger.isWarnEnabled()) {
+                    logger.warn("Destruction of bean with name '" + beanName + "' threw an exception", ex);
+                }
+            }
+        }
+
+        // Trigger destruction of contained beans...
+        Set<String> containedBeans;
+        synchronized (this.containedBeanMap) {
+            // Within full synchronization in order to guarantee a disconnected Set
+            containedBeans = this.containedBeanMap.remove(beanName);
+        }
+        if (containedBeans != null) {
+            for (String containedBeanName : containedBeans) {
+                destroySingleton(containedBeanName);
+            }
+        }
+
+        // Remove destroyed bean from other beans' dependencies.
+        synchronized (this.dependentBeanMap) {
+            for (Iterator<Map.Entry<String, Set<String>>> it = this.dependentBeanMap.entrySet().iterator(); it.hasNext();) {
+                Map.Entry<String, Set<String>> entry = it.next();
+                Set<String> dependenciesToClean = entry.getValue();
+                dependenciesToClean.remove(beanName);
+                if (dependenciesToClean.isEmpty()) {
+                    it.remove();
+                }
+            }
+        }
+
+        // Remove destroyed bean's prepared dependency information.
+        this.dependenciesForBeanMap.remove(beanName);
+    }
+
     @Override
     public Object getSingletonMutex() {
         return this.singletonObjects;
@@ -199,6 +361,72 @@ public class DefaultSingletonBeanRegistry  extends SimpleAliasRegistry implement
         }
         return singletonObject;
     }
+
+
+    public Object getSingleton(String beanName, ObjectFactory<?> singletonFactory) {
+        Assert.notNull(beanName, "Bean name must not be null");
+        synchronized (this.singletonObjects) {
+            Object singletonObject = this.singletonObjects.get(beanName);
+            if (singletonObject == null) {
+                if (this.singletonsCurrentlyInDestruction) {
+                    throw new BeanCreationException(beanName,
+                            "Singleton bean creation not allowed while singletons of this factory are in destruction " +
+                                    "(Do not request a bean from a BeanFactory in a destroy method implementation!)");
+                }
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Creating shared instance of singleton bean '" + beanName + "'");
+                }
+                beforeSingletonCreation(beanName);
+                boolean newSingleton = false;
+                boolean recordSuppressedExceptions = (this.suppressedExceptions == null);
+                if (recordSuppressedExceptions) {
+                    this.suppressedExceptions = new LinkedHashSet<>();
+                }
+                try {
+                    singletonObject = singletonFactory.getObject();
+                    newSingleton = true;
+                }
+                catch (IllegalStateException ex) {
+                    // Has the singleton object implicitly appeared in the meantime ->
+                    // if yes, proceed with it since the exception indicates that state.
+                    singletonObject = this.singletonObjects.get(beanName);
+                    if (singletonObject == null) {
+                        throw ex;
+                    }
+                }
+                catch (BeanCreationException ex) {
+                    if (recordSuppressedExceptions) {
+                        for (Exception suppressedException : this.suppressedExceptions) {
+                            ex.addRelatedCause(suppressedException);
+                        }
+                    }
+                    throw ex;
+                }
+                finally {
+                    if (recordSuppressedExceptions) {
+                        this.suppressedExceptions = null;
+                    }
+                    afterSingletonCreation(beanName);
+                }
+                if (newSingleton) {
+                    addSingleton(beanName, singletonObject);
+                }
+            }
+            return singletonObject;
+        }
+    }
+
+    protected void beforeSingletonCreation(String beanName) {
+        if (!this.inCreationCheckExclusions.contains(beanName) && !this.singletonsCurrentlyInCreation.add(beanName)) {
+            throw new BeanCreationException(beanName);
+        }
+    }
+    protected void afterSingletonCreation(String beanName) {
+        if (!this.inCreationCheckExclusions.contains(beanName) && !this.singletonsCurrentlyInCreation.remove(beanName)) {
+            throw new IllegalStateException("Singleton '" + beanName + "' isn't currently in creation");
+        }
+    }
+
 
     protected boolean isActuallyInCreation(String beanName) {
         return isSingletonCurrentlyInCreation(beanName);

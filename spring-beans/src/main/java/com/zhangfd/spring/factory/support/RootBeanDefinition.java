@@ -82,6 +82,11 @@ public class RootBeanDefinition  extends  AbstractBeanDefinition   {
         super();
     }
 
+    public RootBeanDefinition(@Nullable Class<?> beanClass) {
+        super();
+        setBeanClass(beanClass);
+    }
+
     public RootBeanDefinition(RootBeanDefinition original) {
         super(original);
         this.decoratedDefinition = original.decoratedDefinition;

@@ -61,6 +61,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     private boolean allowRawInjectionDespiteWrapping = false;
 
 
+    public void ignoreDependencyType(Class<?> type) {
+        this.ignoredDependencyTypes.add(type);
+    }
+
 
 
     /** Map between dependent bean names: bean name to Set of dependent bean names. */
@@ -69,7 +73,36 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
     private final Set<String> alreadyCreated = Collections.newSetFromMap(new ConcurrentHashMap<>(256));
 
+    public AbstractAutowireCapableBeanFactory(@Nullable BeanFactory parentBeanFactory) {
+        this();
+        setParentBeanFactory(parentBeanFactory);
+    }
 
+    public AbstractAutowireCapableBeanFactory() {
+        super();
+        ignoreDependencyInterface(BeanNameAware.class);
+        ignoreDependencyInterface(BeanFactoryAware.class);
+        ignoreDependencyInterface(BeanClassLoaderAware.class);
+    }
+
+    @Override
+    public Object applyBeanPostProcessorsBeforeInitialization(Object existingBean, String beanName)
+            throws BeansException {
+
+        Object result = existingBean;
+        for (BeanPostProcessor processor : getBeanPostProcessors()) {
+            Object current = processor.postProcessBeforeInitialization(result, beanName);
+            if (current == null) {
+                return result;
+            }
+            result = current;
+        }
+        return result;
+    }
+
+    public void ignoreDependencyInterface(Class<?> ifc) {
+        this.ignoredDependencyInterfaces.add(ifc);
+    }
 
     @Nullable
     public ParameterNameDiscoverer getParameterNameDiscoverer() {
@@ -89,6 +122,19 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
      */
     protected InstantiationStrategy getInstantiationStrategy() {
         return this.instantiationStrategy;
+    }
+
+    @Override
+    public void copyConfigurationFrom(ConfigurableBeanFactory otherFactory) {
+        super.copyConfigurationFrom(otherFactory);
+        if (otherFactory instanceof AbstractAutowireCapableBeanFactory) {
+            AbstractAutowireCapableBeanFactory otherAutowireFactory =
+                    (AbstractAutowireCapableBeanFactory) otherFactory;
+            this.instantiationStrategy = otherAutowireFactory.instantiationStrategy;
+            this.allowCircularReferences = otherAutowireFactory.allowCircularReferences;
+            this.ignoredDependencyTypes.addAll(otherAutowireFactory.ignoredDependencyTypes);
+            this.ignoredDependencyInterfaces.addAll(otherAutowireFactory.ignoredDependencyInterfaces);
+        }
     }
 
 

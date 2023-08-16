@@ -17,6 +17,7 @@
 package com.zhangfd.spring.factory;
 
 import com.zhangfd.spring.BeansException;
+import com.zhangfd.spring.core.ResolvableType;
 import com.zhangfd.spring.exception.NoSuchBeanDefinitionException;
 import com.zhangfd.spring.exception.NoUniqueBeanDefinitionException;
 import com.zhangfd.spring.factory.support.HierarchicalBeanFactory;
@@ -121,7 +122,51 @@ public abstract class BeanFactoryUtils {
 		return (separatorIndex != -1 ? name.substring(0, separatorIndex) : name);
 	}
 
+	public static String[] beanNamesForTypeIncludingAncestors(ListableBeanFactory lbf, Class<?> type) {
+		Assert.notNull(lbf, "ListableBeanFactory must not be null");
+		String[] result = lbf.getBeanNamesForType(type);
+		if (lbf instanceof HierarchicalBeanFactory) {
+			HierarchicalBeanFactory hbf = (HierarchicalBeanFactory) lbf;
+			if (hbf.getParentBeanFactory() instanceof ListableBeanFactory) {
+				String[] parentResult = beanNamesForTypeIncludingAncestors(
+						(ListableBeanFactory) hbf.getParentBeanFactory(), type);
+				result = mergeNamesWithParent(result, parentResult, hbf);
+			}
+		}
+		return result;
+	}
 
+	public static String[] beanNamesForTypeIncludingAncestors(ListableBeanFactory lbf, ResolvableType type) {
+		Assert.notNull(lbf, "ListableBeanFactory must not be null");
+		String[] result = lbf.getBeanNamesForType(type);
+		if (lbf instanceof HierarchicalBeanFactory) {
+			HierarchicalBeanFactory hbf = (HierarchicalBeanFactory) lbf;
+			if (hbf.getParentBeanFactory() instanceof ListableBeanFactory) {
+				String[] parentResult = beanNamesForTypeIncludingAncestors(
+						(ListableBeanFactory) hbf.getParentBeanFactory(), type);
+				result = mergeNamesWithParent(result, parentResult, hbf);
+			}
+		}
+		return result;
+	}
+
+
+
+	public static String[] beanNamesForTypeIncludingAncestors(
+			ListableBeanFactory lbf, Class<?> type, boolean includeNonSingletons, boolean allowEagerInit) {
+
+		Assert.notNull(lbf, "ListableBeanFactory must not be null");
+		String[] result = lbf.getBeanNamesForType(type, includeNonSingletons, allowEagerInit);
+		if (lbf instanceof HierarchicalBeanFactory) {
+			HierarchicalBeanFactory hbf = (HierarchicalBeanFactory) lbf;
+			if (hbf.getParentBeanFactory() instanceof ListableBeanFactory) {
+				String[] parentResult = beanNamesForTypeIncludingAncestors(
+						(ListableBeanFactory) hbf.getParentBeanFactory(), type, includeNonSingletons, allowEagerInit);
+				result = mergeNamesWithParent(result, parentResult, hbf);
+			}
+		}
+		return result;
+	}
 	// Retrieval of bean names
 
 	/**

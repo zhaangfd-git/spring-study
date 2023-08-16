@@ -1,17 +1,67 @@
+/*
+ * Copyright 2002-2020 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.zhangfd.spring.factory.config;
+
 
 import com.zhangfd.spring.BeanMetadataElement;
 import com.zhangfd.spring.MutablePropertyValues;
+import com.zhangfd.spring.core.AttributeAccessor;
 import com.zhangfd.spring.core.ResolvableType;
 import com.zhangfd.spring.lang.Nullable;
 
 /**
- * 定义一个bean实体的定义，包含这个实体bean，是否有父类，类名字，构造方法(ConstructorArgumentValues)，构造参数，
- * 属性及对应的值(MutablePropertyValues)，
- * 是否需要懒加载、依赖项、factoryBean是谁，factoryBeanMethodName是谁、初始化方法、销毁的方法等等。
+ * A BeanDefinition describes a bean instance, which has property values,
+ * constructor argument values, and further information supplied by
+ * concrete implementations.
+ *
+ * <p>This is just a minimal interface: The main intention is to allow a
+ * {@link BeanFactoryPostProcessor} to introspect and modify property values
+ * and other bean metadata.
+ *
+ * @author Juergen Hoeller
+ * @author Rob Harrop
+ * @since 19.03.2004
+ * @see ConfigurableListableBeanFactory#getBeanDefinition
+ * @see org.springframework.beans.factory.support.RootBeanDefinition
+ * @see org.springframework.beans.factory.support.ChildBeanDefinition
  */
-public interface BeanDefinition  extends BeanMetadataElement {
+public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 
+    /**
+     * Scope identifier for the standard singleton scope: {@value}.
+     * <p>Note that extended bean factories might support further scopes.
+     * @see #setScope
+     * @see ConfigurableBeanFactory#SCOPE_SINGLETON
+     */
+    String SCOPE_SINGLETON = ConfigurableBeanFactory.SCOPE_SINGLETON;
+
+    /**
+     * Scope identifier for the standard prototype scope: {@value}.
+     * <p>Note that extended bean factories might support further scopes.
+     * @see #setScope
+     * @see ConfigurableBeanFactory#SCOPE_PROTOTYPE
+     */
+    String SCOPE_PROTOTYPE = ConfigurableBeanFactory.SCOPE_PROTOTYPE;
+
+
+    /**
+     * Role hint indicating that a {@code BeanDefinition} is a major part
+     * of the application. Typically corresponds to a user-defined bean.
+     */
     int ROLE_APPLICATION = 0;
 
     /**
@@ -34,16 +84,7 @@ public interface BeanDefinition  extends BeanMetadataElement {
     int ROLE_INFRASTRUCTURE = 2;
 
 
-    String SCOPE_SINGLETON = ConfigurableBeanFactory.SCOPE_SINGLETON;
-
-    /**
-     * Scope identifier for the standard prototype scope: {@value}.
-     * <p>Note that extended bean factories might support further scopes.
-     * @see #setScope
-     * @see ConfigurableBeanFactory#SCOPE_PROTOTYPE
-     */
-    String SCOPE_PROTOTYPE = ConfigurableBeanFactory.SCOPE_PROTOTYPE;
-
+    // Modifiable attributes
 
     /**
      * Set the name of the parent definition of this bean definition, if any.
@@ -55,9 +96,6 @@ public interface BeanDefinition  extends BeanMetadataElement {
      */
     @Nullable
     String getParentName();
-
-
-
 
     /**
      * Specify the bean class name of this bean definition.
@@ -178,7 +216,6 @@ public interface BeanDefinition  extends BeanMetadataElement {
     @Nullable
     String getFactoryMethodName();
 
-
     /**
      * Return the constructor argument values for this bean.
      * <p>The returned instance can be modified during bean factory post-processing.
@@ -269,7 +306,17 @@ public interface BeanDefinition  extends BeanMetadataElement {
     String getDescription();
 
 
+    // Read-only attributes
 
+    /**
+     * Return a resolvable type for this bean definition,
+     * based on the bean class or other specific metadata.
+     * <p>This is typically fully resolved on a runtime-merged bean definition
+     * but not necessarily on a configuration-time definition instance.
+     * @return the resolvable type (potentially {@link ResolvableType#NONE})
+     * @since 5.2
+     * @see ConfigurableBeanFactory#getMergedBeanDefinition
+     */
     ResolvableType getResolvableType();
 
     /**

@@ -1,11 +1,16 @@
 package com.zhangfd.spring.factory.config;
 
+import com.zhangfd.spring.beans.PropertyEditorRegistrar;
 import com.zhangfd.spring.beans.TypeConverter;
 import com.zhangfd.spring.core.convert.ConversionService;
 import com.zhangfd.spring.exception.NoSuchBeanDefinitionException;
+import com.zhangfd.spring.factory.BeanFactory;
 import com.zhangfd.spring.factory.support.HierarchicalBeanFactory;
+import com.zhangfd.spring.factory.support.PropertyEditorRegistry;
 import com.zhangfd.spring.lang.Nullable;
+import com.zhangfd.spring.util.StringValueResolver;
 
+import java.beans.PropertyEditor;
 import java.security.AccessControlContext;
 
 public interface ConfigurableBeanFactory  extends HierarchicalBeanFactory {
@@ -40,6 +45,18 @@ public interface ConfigurableBeanFactory  extends HierarchicalBeanFactory {
     @Nullable
     Scope getRegisteredScope(String scopeName);
 
+    void copyConfigurationFrom(ConfigurableBeanFactory otherFactory);
+
+    void setBeanClassLoader(@Nullable ClassLoader beanClassLoader);
+
+    void setCacheBeanMetadata(boolean cacheBeanMetadata);
+
+    @Nullable
+    BeanExpressionResolver getBeanExpressionResolver();
+
+    String[] getRegisteredScopeNames();
+
+    void setBeanExpressionResolver(@Nullable BeanExpressionResolver resolver);
 
     boolean isCacheBeanMetadata();
 
@@ -58,11 +75,51 @@ public interface ConfigurableBeanFactory  extends HierarchicalBeanFactory {
 
     void setConversionService(@Nullable ConversionService conversionService);
 
+
+    boolean isFactoryBean(String name) throws NoSuchBeanDefinitionException;
+    void setParentBeanFactory(BeanFactory parentBeanFactory) throws IllegalStateException;
+
+    void setTempClassLoader(@Nullable ClassLoader tempClassLoader);
+
+    void addEmbeddedValueResolver(StringValueResolver valueResolver);
+    void registerScope(String scopeName, Scope scope);
+    /**
+     * Determine whether an embedded value resolver has been registered with this
+     * bean factory, to be applied through {@link #resolveEmbeddedValue(String)}.
+     * @since 4.3
+     */
+    boolean hasEmbeddedValueResolver();
+
+    void destroyBean(String beanName, Object beanInstance);
+
+    /**
+     * Destroy the specified scoped bean in the current target scope, if any.
+     * <p>Any exception that arises during destruction should be caught
+     * and logged instead of propagated to the caller of this method.
+     * @param beanName the name of the scoped bean
+     */
+    void destroyScopedBean(String beanName);
+    void registerCustomEditor(Class<?> requiredType, Class<? extends PropertyEditor> propertyEditorClass);
+
+    /**
+     * Initialize the given PropertyEditorRegistry with the custom editors
+     * that have been registered with this BeanFactory.
+     * @param registry the PropertyEditorRegistry to initialize
+     */
+    void copyRegisteredEditorsTo(PropertyEditorRegistry registry);
+    void addPropertyEditorRegistrar(PropertyEditorRegistrar registrar);
+
+
     /**
      * Return the associated ConversionService, if any.
      * @since 3.0
      */
     @Nullable
     ConversionService getConversionService();
+
+    @Nullable
+    String resolveEmbeddedValue(String value);
+
+    TypeConverter getTypeConverter();
 
 }

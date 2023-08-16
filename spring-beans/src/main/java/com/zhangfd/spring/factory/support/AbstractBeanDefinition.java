@@ -247,6 +247,16 @@ public abstract class AbstractBeanDefinition   extends BeanMetadataAttributeAcce
         }
     }
 
+    public void validate() throws BeanDefinitionValidationException {
+        if (hasMethodOverrides() && getFactoryMethodName() != null) {
+            throw new BeanDefinitionValidationException(
+                    "Cannot combine factory method with container-generated method overrides: " +
+                            "the factory method must create the concrete bean instance.");
+        }
+        if (hasBeanClass()) {
+            prepareMethodOverrides();
+        }
+    }
 
 
     /**

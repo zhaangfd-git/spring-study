@@ -58,7 +58,7 @@ public class InstantiationStrategyTest {
      * @param clazz
      */
     public static   void   test3( Class<?> clazz ){
-        RootBeanDefinition bd = new RootBeanDefinition(null);
+        RootBeanDefinition bd = new RootBeanDefinition();
         bd.setBeanClass(clazz);
 
         SimpleInstantiationStrategy simpleInstantiationStrategy = new SimpleInstantiationStrategy();
@@ -74,7 +74,7 @@ public class InstantiationStrategyTest {
      * @param clazz
      */
     public static   void   test5( Class<?> clazz ){
-        RootBeanDefinition bd = new RootBeanDefinition(null);
+        RootBeanDefinition bd = new RootBeanDefinition();
         bd.setBeanClass(clazz);
 
         SimpleInstantiationStrategy simpleInstantiationStrategy = new SimpleInstantiationStrategy();
