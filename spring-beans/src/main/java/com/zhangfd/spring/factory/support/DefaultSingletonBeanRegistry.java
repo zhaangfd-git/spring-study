@@ -46,7 +46,6 @@ public class DefaultSingletonBeanRegistry  extends SimpleAliasRegistry implement
     @Nullable
     private Set<Exception> suppressedExceptions;
 
-
     //最大支持的保存异常信息个数
     private static final int SUPPRESSED_EXCEPTIONS_LIMIT = 100;
 
