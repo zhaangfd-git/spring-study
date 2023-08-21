@@ -86,6 +86,14 @@ public class RootBeanDefinition  extends  AbstractBeanDefinition   {
         super();
         setBeanClass(beanClass);
     }
+    public RootBeanDefinition(@Nullable Class<?> beanClass, int autowireMode, boolean dependencyCheck) {
+        super();
+        setBeanClass(beanClass);
+        setAutowireMode(autowireMode);
+        if (dependencyCheck && getResolvedAutowireMode() != AUTOWIRE_CONSTRUCTOR) {
+            setDependencyCheck(DEPENDENCY_CHECK_OBJECTS);
+        }
+    }
 
     public RootBeanDefinition(RootBeanDefinition original) {
         super(original);

@@ -104,7 +104,7 @@ public interface BeanFactory {
      * @since 5.1
      * @see #getBeanProvider(ResolvableType)
      */
-    //<T> ObjectProvider<T> getBeanProvider(Class<T> requiredType);
+    <T> ObjectProvider<T> getBeanProvider(Class<T> requiredType);
 
     /**
      * Return a provider for the specified bean, allowing for lazy on-demand retrieval
@@ -120,7 +120,7 @@ public interface BeanFactory {
      * @see ObjectProvider#stream()
      * @see ObjectProvider#orderedStream()
      */
-    //<T> ObjectProvider<T> getBeanProvider(ResolvableType requiredType);
+    <T> ObjectProvider<T> getBeanProvider(ResolvableType requiredType);
 
     /**
      * Does this bean factory contain a bean definition or externally registered singleton
@@ -261,9 +261,6 @@ public interface BeanFactory {
     String[] getAliases(String name);
 
 
-    <T> ObjectProvider<T> getBeanProvider(ResolvableType requiredType);
-
-    <T> ObjectProvider<T> getBeanProvider(Class<T> requiredType);
 
 
 }

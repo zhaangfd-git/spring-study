@@ -88,6 +88,17 @@ public class DefaultSingletonBeanRegistry  extends SimpleAliasRegistry implement
         }
     }
 
+    public String[] getDependentBeans(String beanName) {
+        Set<String> dependentBeans = this.dependentBeanMap.get(beanName);
+        if (dependentBeans == null) {
+            return new String[0];
+        }
+        synchronized (this.dependentBeanMap) {
+            return StringUtils.toStringArray(dependentBeans);
+        }
+    }
+
+
     private boolean isDependent(String beanName, String dependentBeanName, @Nullable Set<String> alreadySeen) {
         if (alreadySeen != null && alreadySeen.contains(beanName)) {
             return false;

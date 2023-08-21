@@ -37,6 +37,16 @@ public abstract  class FactoryBeanRegistrySupport extends  DefaultSingletonBeanR
         }
     }
 
+
+    protected FactoryBean<?> getFactoryBean(String beanName, Object beanInstance) throws BeansException {
+        if (!(beanInstance instanceof FactoryBean)) {
+            throw new BeanCreationException(beanName,
+                    "Bean instance of type [" + beanInstance.getClass() + "] is not a FactoryBean");
+        }
+        return (FactoryBean<?>) beanInstance;
+    }
+
+
     @Override
     protected void removeSingleton(String beanName) {
         synchronized (getSingletonMutex()) {
