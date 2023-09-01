@@ -179,7 +179,7 @@ public class DefaultSingletonBeanRegistry  extends SimpleAliasRegistry implement
     }
 
     /**
-     * 放入三级缓存，
+     * 若1级缓存没有值，放入三级缓存，
      * 1、2级缓存删除值
      * @param beanName
      * @param singletonFactory
@@ -373,13 +373,18 @@ public class DefaultSingletonBeanRegistry  extends SimpleAliasRegistry implement
         return singletonObject;
     }
 
-
+    /**
+     * 获取单例对象，获取不到就去创建它
+     * @param beanName
+     * @param singletonFactory
+     * @return
+     */
     public Object getSingleton(String beanName, ObjectFactory<?> singletonFactory) {
         Assert.notNull(beanName, "Bean name must not be null");
-        synchronized (this.singletonObjects) {
-            Object singletonObject = this.singletonObjects.get(beanName);
-            if (singletonObject == null) {
-                if (this.singletonsCurrentlyInDestruction) {
+        synchronized (this.singletonObjects) {//上来就锁定一级缓存
+            Object singletonObject = this.singletonObjects.get(beanName);//查看一级缓存是否有值
+            if (singletonObject == null) { //若为空
+                if (this.singletonsCurrentlyInDestruction) {//而我们又在销毁这个bean则报错
                     throw new BeanCreationException(beanName,
                             "Singleton bean creation not allowed while singletons of this factory are in destruction " +
                                     "(Do not request a bean from a BeanFactory in a destroy method implementation!)");
@@ -387,6 +392,7 @@ public class DefaultSingletonBeanRegistry  extends SimpleAliasRegistry implement
                 if (logger.isDebugEnabled()) {
                     logger.debug("Creating shared instance of singleton bean '" + beanName + "'");
                 }
+                //加入map，标识这个bean正在创建
                 beforeSingletonCreation(beanName);
                 boolean newSingleton = false;
                 boolean recordSuppressedExceptions = (this.suppressedExceptions == null);
@@ -394,13 +400,14 @@ public class DefaultSingletonBeanRegistry  extends SimpleAliasRegistry implement
                     this.suppressedExceptions = new LinkedHashSet<>();
                 }
                 try {
+                    //调用ObjectFactory接口的实现类，创建对象
                     singletonObject = singletonFactory.getObject();
                     newSingleton = true;
                 }
-                catch (IllegalStateException ex) {
+                catch (IllegalStateException ex) {//若报非法的异常，说明其他线程已经创建对象，这里再次从一级缓存获取对象。
                     // Has the singleton object implicitly appeared in the meantime ->
                     // if yes, proceed with it since the exception indicates that state.
-                    singletonObject = this.singletonObjects.get(beanName);
+                    singletonObject = this.singletonObjects.get(beanName);//再次从一级缓存获取对象
                     if (singletonObject == null) {
                         throw ex;
                     }
@@ -419,7 +426,7 @@ public class DefaultSingletonBeanRegistry  extends SimpleAliasRegistry implement
                     }
                     afterSingletonCreation(beanName);
                 }
-                if (newSingleton) {
+                if (newSingleton) {//说明是第一次创建的单例，给放入一级缓存中，同时删除二、三级缓存
                     addSingleton(beanName, singletonObject);
                 }
             }

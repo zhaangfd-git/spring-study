@@ -283,9 +283,12 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
                 }
 
                 // Create bean instance.
+                //单例
                 if (mbd.isSingleton()) {
+                     //获取单例对象，获取不到就去创建它
                     sharedInstance = getSingleton(beanName, () -> {
                         try {
+                            //创建对象
                             return createBean(beanName, mbd, args);
                         }
                         catch (BeansException ex) {
@@ -297,9 +300,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
                         }
                     });
                     bean = getObjectForBeanInstance(sharedInstance, name, beanName, mbd);
-                }
-
-                else if (mbd.isPrototype()) {
+                }else if (mbd.isPrototype()) {  //原型
                     // It's a prototype -> create a new instance.
                     Object prototypeInstance = null;
                     try {
@@ -310,9 +311,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
                         afterPrototypeCreation(beanName);
                     }
                     bean = getObjectForBeanInstance(prototypeInstance, name, beanName, mbd);
-                }
-
-                else {
+                }else {  //其他scope
                     String scopeName = mbd.getScope();
                     if (!StringUtils.hasLength(scopeName)) {
                         throw new IllegalStateException("No scope name defined for bean ´" + beanName + "'");
