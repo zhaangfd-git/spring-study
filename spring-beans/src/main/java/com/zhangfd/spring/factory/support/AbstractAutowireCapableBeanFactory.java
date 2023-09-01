@@ -1394,6 +1394,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             }
             //AutowiredAnnotationBeanPostProcessor --->解析@Autowired、@Value注解
             //CommonAnnotationBeanPostProcessor   --->解析@Resource注解
+            //ImportAwareBeanPostProcessor  处理ImportAware实现类的bean
+            //AbstractAutoProxyCreator  //代理使用
             for (BeanPostProcessor bp : getBeanPostProcessors()) {
                 if (bp instanceof InstantiationAwareBeanPostProcessor) {
                     InstantiationAwareBeanPostProcessor ibp = (InstantiationAwareBeanPostProcessor) bp;
