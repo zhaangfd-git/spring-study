@@ -60,7 +60,7 @@ public abstract  class FactoryBeanRegistrySupport extends  DefaultSingletonBeanR
         return this.factoryBeanObjectCache.get(beanName);
     }
 
-    protected Object getObjectFromFactoryBean(FactoryBean<?> factory, String beanName, boolean shouldPostProcess) {
+    public Object getObjectFromFactoryBean(FactoryBean<?> factory, String beanName, boolean shouldPostProcess) {
         if (factory.isSingleton() && containsSingleton(beanName)) {
             synchronized (getSingletonMutex()) {
                 Object object = this.factoryBeanObjectCache.get(beanName);

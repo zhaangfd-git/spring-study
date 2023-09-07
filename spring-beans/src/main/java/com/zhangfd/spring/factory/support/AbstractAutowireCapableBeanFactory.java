@@ -440,7 +440,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
      * @see #doCreateBean
      */
     @Override
-    protected Object createBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)
+    public Object createBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)
             throws BeanCreationException {
 
         if (logger.isTraceEnabled()) {
@@ -1623,7 +1623,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     /**
      * Apply the given property values, resolving any runtime references
      * to other beans in this bean factory. Must use deep copy, so we
-     * don't permanently modify this property.
+     * don't permanently(长期) modify this property.
      * @param beanName the bean name passed for better exception information
      * @param mbd the merged bean definition
      * @param bw the BeanWrapper wrapping the target object
@@ -1643,10 +1643,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
         if (pvs instanceof MutablePropertyValues) {
             mpvs = (MutablePropertyValues) pvs;
-            if (mpvs.isConverted()) {
+            if (mpvs.isConverted()) {//若已经进行过类型转换
                 // Shortcut: use the pre-converted values as-is.
                 try {
-                    bw.setPropertyValues(mpvs);
+                    bw.setPropertyValues(mpvs); //直接赋值后返回
                     return;
                 }
                 catch (BeansException ex) {
@@ -1659,11 +1659,12 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         else {
             original = Arrays.asList(pvs.getPropertyValues());
         }
-
+         //获取自定义类型转换器
         TypeConverter converter = getCustomTypeConverter();
-        if (converter == null) {
+        if (converter == null) { //若自定义转换器没有值，默认使用BeanWrappeImpl对象
             converter = bw;
         }
+
         BeanDefinitionValueResolver valueResolver = new BeanDefinitionValueResolver(this, beanName, mbd, converter);
 
         // Create a deep copy, resolving any references for values.
@@ -1685,9 +1686,11 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                 }
                 Object resolvedValue = valueResolver.resolveValueIfNecessary(pv, originalValue);
                 Object convertedValue = resolvedValue;
+                //判断这个属性是否有setter方法
                 boolean convertible = bw.isWritableProperty(propertyName) &&
                         !PropertyAccessorUtils.isNestedOrIndexedProperty(propertyName);
                 if (convertible) {
+                    //有的话，进行值的类型转换。
                     convertedValue = convertForProperty(resolvedValue, propertyName, bw, converter);
                 }
                 // Possibly store converted value in merged bean definition,

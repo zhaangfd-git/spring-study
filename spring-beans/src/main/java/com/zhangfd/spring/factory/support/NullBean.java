@@ -33,7 +33,7 @@ import com.zhangfd.spring.lang.Nullable;
  * @author Juergen Hoeller
  * @since 5.0
  */
-final class NullBean {
+public final class NullBean {
 
 	NullBean() {
 	}

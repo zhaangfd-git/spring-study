@@ -195,6 +195,19 @@ public class DefaultSingletonBeanRegistry  extends SimpleAliasRegistry implement
         }
     }
 
+
+    public void registerContainedBean(String containedBeanName, String containingBeanName) {
+        synchronized (this.containedBeanMap) {
+            Set<String> containedBeans =
+                    this.containedBeanMap.computeIfAbsent(containingBeanName, k -> new LinkedHashSet<>(8));
+            if (!containedBeans.add(containedBeanName)) {
+                return;
+            }
+        }
+        registerDependentBean(containedBeanName, containingBeanName);
+    }
+
+
     @Override
     @Nullable
     public Object getSingleton(String beanName) {

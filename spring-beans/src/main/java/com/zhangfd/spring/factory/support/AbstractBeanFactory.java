@@ -1274,7 +1274,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
      * @return a (potentially merged) RootBeanDefinition for the given bean
      * @throws BeanDefinitionStoreException in case of an invalid bean definition
      */
-    protected RootBeanDefinition getMergedBeanDefinition(
+    public RootBeanDefinition getMergedBeanDefinition(
             String beanName, BeanDefinition bd, @Nullable BeanDefinition containingBd)
             throws BeanDefinitionStoreException {
 
@@ -1523,7 +1523,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
      * @see #setBeanExpressionResolver
      */
     @Nullable
-    protected Object evaluateBeanDefinitionString(@Nullable String value, @Nullable BeanDefinition beanDefinition) {
+    public Object evaluateBeanDefinitionString(@Nullable String value, @Nullable BeanDefinition beanDefinition) {
         if (this.beanExpressionResolver == null) {
             return value;
         }
