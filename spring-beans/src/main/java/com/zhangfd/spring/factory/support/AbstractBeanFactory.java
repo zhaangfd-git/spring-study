@@ -224,9 +224,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
                 }
             }
             bean = getObjectForBeanInstance(sharedInstance, name, beanName, null);
-        }
-
-        else {
+        }else {
             // Fail if we're already creating this bean instance:
             // We're assumably within a circular reference.
             if (isPrototypeCurrentlyInCreation(beanName)) {
