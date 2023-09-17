@@ -21,7 +21,9 @@ public class BeanWrapperImplTest {
         BeanWrapper beanWrapper = new BeanWrapperImpl(new BeanInfoTest());
         HashMap<String, List<Integer>> param = new HashMap<>();
         List<Integer>  tt = new ArrayList<>();
-        tt.add(1);tt.add(2);param.put("test",tt);
+        tt.add(1);
+        tt.add(2);
+        param.put("test",tt);
         //给包装对象的属性赋值
         //  beanWrapper.setPropertyValue("param",param);
 
@@ -36,7 +38,10 @@ public class BeanWrapperImplTest {
         ps.addPropertyValue("param",param);
         beanWrapper.setPropertyValues(ps,true);
 
-        Object wrappedInstance = beanWrapper.getWrappedInstance();
+        BeanInfoTest wrappedInstance = (BeanInfoTest) beanWrapper.getWrappedInstance();
+        System.out.println(wrappedInstance.getName()); //已经赋值了 zhangmm
+        System.out.println(wrappedInstance.getParam());
+        System.out.println(wrappedInstance.getAge());
 
         //做类型转换:spring内置了大量了常用的属性编辑器，可自动完成类型转换工作
         BeanWrapper beanWrapper01 = new BeanWrapperImpl();
