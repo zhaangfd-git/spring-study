@@ -846,13 +846,20 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
 		// Iterate over a copy to allow for init methods which in turn register new bean definitions.
 		// While this may not be part of the regular factory bootstrap, it does otherwise work fine.
+		// 1、本类定义了一个集合List<String> beanDefinitionNames用于保存多有的beanName
 		List<String> beanNames = new ArrayList<>(this.beanDefinitionNames);
 
 		// Trigger initialization of all non-lazy singleton beans...
+		//2、这里触发所有非懒加载的bean进行实例化操作
 		for (String beanName : beanNames) {
+			//获取最终的RootBeanDefinition，先判断是否需要合并BeanDefinition，比如我们定义了一个子类
+			//它的父类也有对象的BeanDefinition，这里就要把父类的BeanDefinition合并到子类的BeanDefinition中去。
+			//保存原始的beanName ---BeanDefinition 是本类定义的集合 Map<String, BeanDefinition> beanDefinitionMap
+			//合并后的beanName ---BeanDefinition，是在本类的集合Map<String, BeanDefinitionHolder> mergedBeanDefinitionHolders 中保存
 			RootBeanDefinition bd = getMergedLocalBeanDefinition(beanName);
 			if (!bd.isAbstract() && bd.isSingleton() && !bd.isLazyInit()) {
 				if (isFactoryBean(beanName)) {
+					//对FactoryBean的实现类进行实例化
 					Object bean = getBean(FACTORY_BEAN_PREFIX + beanName);
 					if (bean instanceof FactoryBean) {
 						FactoryBean<?> factory = (FactoryBean<?>) bean;
@@ -861,22 +868,25 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 							isEagerInit = AccessController.doPrivileged(
 									(PrivilegedAction<Boolean>) ((SmartFactoryBean<?>) factory)::isEagerInit,
 									getAccessControlContext());
-						}
-						else {
+						}else {
 							isEagerInit = (factory instanceof SmartFactoryBean &&
 									((SmartFactoryBean<?>) factory).isEagerInit());
 						}
+						//如果希望尽早对FactoryBean的包装类进行实例化，需要实现SmartFactoryBean，并且isEagerInit方法返回为true，
+						//否则就只能等调用getObject的时候才会实例化它的包装类。
 						if (isEagerInit) {
 							getBean(beanName);
 						}
 					}
-				}
-				else {
+				}else {
 					getBean(beanName);
 				}
 			}
 		}
-
+        //3、对于实例化后的单例，如有SmartInitializingSingleton的实现类，这调用它的afterSingletonsInstantiated方法
+		//这里的好处是待所有的单例都实例化后才进行的操作。
+		//如：EventListenerMethodProcessor，主要用于完成@EventListener注解方式的事件监听
+		//如：LoadBalancerAutoConfiguration自动装配类中，就向Spring中注入了一个SmartInitializingSingleton实现类
 		// Trigger post-initialization callback for all applicable beans...
 		for (String beanName : beanNames) {
 			Object singletonInstance = getSingleton(beanName);

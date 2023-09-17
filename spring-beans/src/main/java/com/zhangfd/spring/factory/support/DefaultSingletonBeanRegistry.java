@@ -362,20 +362,38 @@ public class DefaultSingletonBeanRegistry  extends SimpleAliasRegistry implement
     @Nullable
     protected Object getSingleton(String beanName, boolean allowEarlyReference) {
         // Quick check for existing instance without full singleton lock
+        //先去一级缓存里查看是否存在（一级缓存里存的是完完整整的被实例化好的实例对象）
         Object singletonObject = this.singletonObjects.get(beanName);
+        //若一级缓存里没有，并且这个bean被标注为正在创建
         if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
+            //再去二级缓存查看是否存在，若存在则直接返回，不存在则继续去三级缓存里取值
             singletonObject = this.earlySingletonObjects.get(beanName);
+            //若二级缓存也不存在的话
             if (singletonObject == null && allowEarlyReference) {
-                synchronized (this.singletonObjects) {
+                synchronized (this.singletonObjects) {//此时给一级缓存加锁，这里使用的是double check机制
                     // Consistent creation of early reference within full singleton lock
                     singletonObject = this.singletonObjects.get(beanName);
                     if (singletonObject == null) {
                         singletonObject = this.earlySingletonObjects.get(beanName);
-                        if (singletonObject == null) {
+                        if (singletonObject == null) {//此时表明一、二级缓存都没有值
+                            //去三级缓存里取值，三级缓存其实获取的是工厂ObjectFactory对象，需要通过getObject方法才能获取真实对象
+                            //整个过程为啥会设计三级缓存呢？其实就是解决spring里所谓的循环依赖问题，比如A依赖B，B也依赖A
+                            //1、正常情况下，先通过反射创建A对象，放入一个map2中，待填充值和初始化完成后放入另外一个map1
+                            //在创建B的时候，先通过反射创建B对象放入map2， 发现依赖A实例，那么去map2中获取它赋值给B中的属性
+                            // （即使此时A还没有实例化，但在堆栈里地址不会变，后面实例化完成也可啊），待B初始化完成后放入map1，然后A依赖的B
+                            //再去map1获取值后进行赋值操作，完成后把A对象放入map1即可。
+
+                            //参考https://blog.csdn.net/weixin_44129618/article/details/122839774
+                            //2、不正常的情况经常发生啊，比如A依赖B，B也依赖A，并且A被aop了（被aop后回创建一个全新的对象存入一级缓存
+                            // 有人说那我们在最开始就创建A的代理对象存入二级缓存，可是要注意spring实现的aop可是在创建完对象之后哈），
+                            //这样貌似上面的方法就不能使用了，二级缓存完败。
+                            //对此，spring做了特殊处理，引入所谓的三季缓存机制，
                             ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
                             if (singletonFactory != null) {
                                 singletonObject = singletonFactory.getObject();
+                                //若三级缓存取到值，就要其放入二级缓存中，二级缓存里存的对象还没有初始化，填充值也没有完成；
                                 this.earlySingletonObjects.put(beanName, singletonObject);
+                                //从三级缓存中去掉
                                 this.singletonFactories.remove(beanName);
                             }
                         }
@@ -416,24 +434,21 @@ public class DefaultSingletonBeanRegistry  extends SimpleAliasRegistry implement
                     //调用ObjectFactory接口的实现类，创建对象
                     singletonObject = singletonFactory.getObject();
                     newSingleton = true;
-                }
-                catch (IllegalStateException ex) {//若报非法的异常，说明其他线程已经创建对象，这里再次从一级缓存获取对象。
+                }catch (IllegalStateException ex) {//若报非法的异常，说明其他线程已经创建对象，这里再次从一级缓存获取对象。
                     // Has the singleton object implicitly appeared in the meantime ->
                     // if yes, proceed with it since the exception indicates that state.
                     singletonObject = this.singletonObjects.get(beanName);//再次从一级缓存获取对象
                     if (singletonObject == null) {
                         throw ex;
                     }
-                }
-                catch (BeanCreationException ex) {
+                }catch (BeanCreationException ex) {
                     if (recordSuppressedExceptions) {
                         for (Exception suppressedException : this.suppressedExceptions) {
                             ex.addRelatedCause(suppressedException);
                         }
                     }
                     throw ex;
-                }
-                finally {
+                }finally {
                     if (recordSuppressedExceptions) {
                         this.suppressedExceptions = null;
                     }

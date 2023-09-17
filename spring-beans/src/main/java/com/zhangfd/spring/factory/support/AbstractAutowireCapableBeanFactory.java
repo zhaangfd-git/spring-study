@@ -521,10 +521,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         if (mbd.isSingleton()) { //单例的话，factoryBeanInstanceCache集合缓存了beanName---BeanWrapper对象
             instanceWrapper = this.factoryBeanInstanceCache.remove(beanName);
         }
-        if (instanceWrapper == null) { //创建BeanWrapper的实现类
-            instanceWrapper = createBeanInstance(beanName, mbd, args);
+        if (instanceWrapper == null) { //创建BeanWrapper的实现类，一个beanName对应一个BeanWrapperImpl对象
+            instanceWrapper = createBeanInstance(beanName, mbd, args);//这里已经根据反射创建了实例对象
         }
-        //被包装类的实例
+        //被包装类的实例对象
         Object bean = instanceWrapper.getWrappedInstance();
         //被包装类的类类型
         Class<?> beanType = instanceWrapper.getWrappedClass();
@@ -1080,6 +1080,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     @Nullable
     protected Object resolveBeforeInstantiation(String beanName, RootBeanDefinition mbd) {
         Object bean = null;
+        //必须标注这个bean，上来就创建代理对象，也就是设置mbd.beforeInstantiationResolved=true
         if (!Boolean.FALSE.equals(mbd.beforeInstantiationResolved)) {
             // Make sure bean class is actually resolved at this point.
             if (!mbd.isSynthetic() && hasInstantiationAwareBeanPostProcessors()) {
@@ -1341,6 +1342,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     @SuppressWarnings("deprecation")  // for postProcessPropertyValues
     protected void populateBean(String beanName, RootBeanDefinition mbd, @Nullable BeanWrapper bw) {
 
+        //若没有包装类但有属性赋值，则报错
         if (bw == null) {
             if (mbd.hasPropertyValues()) {
                 throw new BeanCreationException(
