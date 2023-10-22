@@ -521,7 +521,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         if (mbd.isSingleton()) { //单例的话，factoryBeanInstanceCache集合缓存了beanName---BeanWrapper对象
             instanceWrapper = this.factoryBeanInstanceCache.remove(beanName);
         }
-        if (instanceWrapper == null) { //创建BeanWrapper的实现类，一个beanName对应一个BeanWrapperImpl对象
+        if (instanceWrapper == null) { //1、创建BeanWrapper的实现类，一个beanName对应一个BeanWrapperImpl对象
             instanceWrapper = createBeanInstance(beanName, mbd, args);//这里已经根据反射创建了实例对象
         }
         //被包装类的实例对象
@@ -556,7 +556,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                 logger.trace("Eagerly caching bean '" + beanName +
                         "' to allow for resolving potential circular references");
             }
-            //先放入三级缓存（此时一级缓存还没有值） （调用SmartInstantiationAwareBeanPostProcessor的实现类）
+            //3、先放入三级缓存（此时一级缓存还没有值） （调用SmartInstantiationAwareBeanPostProcessor的实现类）
             addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean));
         }
 
@@ -583,8 +583,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             if (earlySingletonReference != null) {
                 if (exposedObject == bean) {
                     exposedObject = earlySingletonReference;
-                }
-                else if (!this.allowRawInjectionDespiteWrapping && hasDependentBean(beanName)) {
+                }else if (!this.allowRawInjectionDespiteWrapping && hasDependentBean(beanName)) {
                     String[] dependentBeans = getDependentBeans(beanName);
                     Set<String> actualDependentBeans = new LinkedHashSet<>(dependentBeans.length);
                     for (String dependentBean : dependentBeans) {
@@ -1357,7 +1356,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         // Give any InstantiationAwareBeanPostProcessors the opportunity to modify the
         // state of the bean before properties are set. This can be used, for example,
         // to support styles of field injection.
-        //实例化后，再给InstantiationAwareBeanPostProcessors#postProcessAfterInstantiation一次机会修改实例
+        //1、实例化后，再给InstantiationAwareBeanPostProcessors#postProcessAfterInstantiation一次机会修改实例
         if (!mbd.isSynthetic() && hasInstantiationAwareBeanPostProcessors()) {
             for (BeanPostProcessor bp : getBeanPostProcessors()) {
                 if (bp instanceof InstantiationAwareBeanPostProcessor) {
@@ -1721,6 +1720,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
         // Set our (possibly massaged) deep copy.
         try {
+            //对被包装类的属性赋值
             bw.setPropertyValues(new MutablePropertyValues(deepCopy));
         }
         catch (BeansException ex) {
@@ -1779,18 +1779,19 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             }, getAccessControlContext());
         }
         else {
-            //BeanNameAware、BeanClassLoaderAware、BeanFactoryAware
+            //1、BeanNameAware、BeanClassLoaderAware、BeanFactoryAware
             invokeAwareMethods(beanName, bean);
         }
 
         //执行BeanPostProcessor#postProcessBeforeInitialization方法
         Object wrappedBean = bean;
         if (mbd == null || !mbd.isSynthetic()) {
+            //2.调用BeanPostProcessor实现类的BeforeInitialization方法
             wrappedBean = applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName);
         }
 
         try {
-            //InitializingBean#afterPropertiesSet方法
+            //3、InitializingBean#afterPropertiesSet方法
             //执行客户自定义的init方法
             invokeInitMethods(beanName, wrappedBean, mbd);
         }
@@ -1800,7 +1801,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                     beanName, "Invocation of init method failed", ex);
         }
         if (mbd == null || !mbd.isSynthetic()) {
-            //执行BeanPostProcessor#postProcessAfterInitialization方法
+            //4、执行BeanPostProcessor#postProcessAfterInitialization方法
             wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName);
         }
 
