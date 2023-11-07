@@ -556,7 +556,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
                 logger.trace("Eagerly caching bean '" + beanName +
                         "' to allow for resolving potential circular references");
             }
-            //3、先放入三级缓存（此时一级缓存还没有值） （调用SmartInstantiationAwareBeanPostProcessor的实现类）
+            //3、先放入三级缓存（此时一级缓存还没有值） （调用SmartInstantiationAwareBeanPostProcessor#getEarlyBeanReference的实现类，spring
+            // 体系里实现方法只有AbstractAutoProxyCreator#getEarlyBeanReference做了，显然这里的三级缓存就是为了实现代理实现的。）
             addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean));
         }
 
