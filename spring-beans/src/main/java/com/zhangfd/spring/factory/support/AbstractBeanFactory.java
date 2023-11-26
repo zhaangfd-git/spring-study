@@ -208,7 +208,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
             String name, @Nullable Class<T> requiredType, @Nullable Object[] args, boolean typeCheckOnly)
             throws BeansException {
         //1、若beanName前有&符号，这全部去掉，这是针对FactoryBean创建的实例，会在前面加上&
-        //若自己定义的beanName，就会出问题了。
+        //若自己定义的beanName前有&符号，就可能出问题。
         String beanName = transformedBeanName(name);
         Object bean;
 
@@ -229,13 +229,13 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
         }else {
             // Fail if we're already creating this bean instance:
             // We're assumably within a circular reference.
-            //3.1循环依赖不支持原型模式
+            //2.1 原型模式不能创建
             if (isPrototypeCurrentlyInCreation(beanName)) {
                 throw new BeanCurrentlyInCreationException(beanName);
             }
 
             // Check if bean definition exists in this factory.
-            //3.2 先检查父工厂是否已经有了，
+            //2.2 先检查父工厂是否已经有了，
             BeanFactory parentBeanFactory = getParentBeanFactory();
             if (parentBeanFactory != null && !containsBeanDefinition(beanName)) {
                 // Not found -> check parent.
@@ -256,19 +256,19 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
                     return (T) parentBeanFactory.getBean(nameToLookup);
                 }
             }
-            //3.3标记这个bean正在创建
+            //2.3标记这个bean正在创建
             if (!typeCheckOnly) {
                 markBeanAsCreated(beanName);
             }
 
             try {
-                //3.4 被实例化的类若也有父实现类，这这里把从父类继承的属性定义全部继承过来
+                //2.4 被实例化的类若也有父实现类，这里把从父类继承的属性定义全部继承过来
                 RootBeanDefinition mbd = getMergedLocalBeanDefinition(beanName);
                 //再次确保不是抽象类
                 checkMergedBeanDefinition(mbd, beanName, args);
 
                 // Guarantee initialization of beans that the current bean depends on.
-                //3.5获取创建该bean的所有依赖实例，注意这里是mbd.getDependsOn()是通过@DependOn显示强加的，这种强依赖，spring是不支持的。
+                //2.5获取创建该bean的所有依赖实例，注意这里是mbd.getDependsOn()是通过@DependOn显示强加的，这种强依赖，spring是不支持的。
                 //所以平时听到的Spring解决循环依赖问题只是针对@Autowire注解。
                 // 对于@DependOn注解，存在循环依赖还是会报错的（抛出BeanCreationException异常）
                 String[] dependsOn = mbd.getDependsOn();
@@ -292,7 +292,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
                 }
 
                 // Create bean instance.
-                //3.6单例
+                //2.6创建单例
                 if (mbd.isSingleton()) {
                      //获取单例对象，获取不到就去创建它
                     sharedInstance = getSingleton(beanName, () -> {
