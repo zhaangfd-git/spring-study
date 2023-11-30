@@ -13,7 +13,7 @@ import com.zhangfd.spring.util.StringValueResolver;
 import java.beans.PropertyEditor;
 import java.security.AccessControlContext;
 
-public interface ConfigurableBeanFactory  extends HierarchicalBeanFactory {
+public interface ConfigurableBeanFactory  extends HierarchicalBeanFactory, SingletonBeanRegistry {
 
     /**
      * Scope identifier for the standard singleton scope: {@value}.
@@ -55,6 +55,18 @@ public interface ConfigurableBeanFactory  extends HierarchicalBeanFactory {
     BeanExpressionResolver getBeanExpressionResolver();
 
     String[] getRegisteredScopeNames();
+
+    String[] getDependentBeans(String beanName);
+
+    /**
+     * Return the names of all beans that the specified bean depends on, if any.
+     * @param beanName the name of the bean
+     * @return the array of names of beans which the bean depends on,
+     * or an empty array if none
+     * @since 2.5
+     */
+    String[] getDependenciesForBean(String beanName);
+
 
     void setBeanExpressionResolver(@Nullable BeanExpressionResolver resolver);
 
@@ -121,5 +133,5 @@ public interface ConfigurableBeanFactory  extends HierarchicalBeanFactory {
     String resolveEmbeddedValue(String value);
 
     TypeConverter getTypeConverter();
-
+    void destroySingletons();
 }

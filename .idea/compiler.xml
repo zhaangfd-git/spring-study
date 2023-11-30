@@ -10,6 +10,7 @@
         <module name="spring-test" />
         <module name="spring-jcl" />
         <module name="spring-core" />
+        <module name="spring-context" />
       </profile>
     </annotationProcessing>
   </component>
