@@ -161,8 +161,6 @@ Rspring-beans/src/main/java/com/zhangfd/spring/factory/support/MethodOverrides.j
 Vspring-beans/src/main/java/com/zhangfd/spring/factory/config/BeanDefinitionHolder.java,f\7\f7eb451c9f2b443b4fa7b226d424b9ae8c195f29
 w
 Gspring-core/src/main/java/com/zhangfd/spring/core/NamedThreadLocal.java,b\4\b4bc1cba9f74a90df87a79c18bd7b9f6bcaee1ca
-ì
-cspring-beans/src/main/java/com/zhangfd/spring/factory/config/DestructionAwareBeanPostProcessor.java,b\d\bdac9b01a41e39d2c275b8828383d11cb40c1dff
 é
 ^spring-beans/src/main/java/com/zhangfd/spring/exception/BeanDefinitionValidationException.java,b\f\bfd14fdc461f4ee23cca2048078e6c083fccd43c
 r
@@ -435,10 +433,6 @@ Xspring-test/src/main/java/com/zhangfd/spring/test/PropertyEditorRegistrySupport
 Nspring-beans/src/main/java/com/zhangfd/spring/beans/TypeConverterDelegate.java,a\7\a79d904c1221157e1b71e34ae7f40e0e7b856b6d
 ê
 `spring-beans/src/main/java/com/zhangfd/spring/factory/support/PropertyEditorRegistrySupport.java,7\a\7ada5d839d412418a871e34d0d1b4cee923c1ede
-é
-^spring-beans/src/main/java/com/zhangfd/spring/factory/support/SimpleInstantiationStrategy.java,8\5\85c3b46967207b6cabb865b0fdada0624b5f164a
-à
-Xspring-beans/src/main/java/com/zhangfd/spring/factory/support/InstantiationStrategy.java,0\9\09cc7d107dcdda83b789e149c7e0d6a167997966
 Å
 Qspring-beans/src/main/java/com/zhangfd/spring/beans/AbstractPropertyAccessor.java,0\d\0dbbfac383fb2a0746693cfc73cf25b671bd40c3
 É
@@ -458,8 +452,6 @@ Pspring-beans/src/main/java/com/zhangfd/spring/beans/PropertyDescriptorUtils.jav
 É
 Sspring-beans/src/main/java/com/zhangfd/spring/beans/CachedIntrospectionResults.java,3\c\3c2625bb425073f27294aeb6382035e3d25ed7ba
 {
-Kspring-beans/src/main/java/com/zhangfd/spring/factory/InitializingBean.java,8\5\859e8c20de1c1ae0d6a3ec416695ed6fc31cfdc0
-{
 Kspring-beans/src/main/java/com/zhangfd/spring/factory/BeanFactoryAware.java,f\c\fcf7ef058e291727faf69d80102d1cd78f23fdc5
 
 Ospring-beans/src/main/java/com/zhangfd/spring/factory/BeanClassLoaderAware.java,0\e\0ef5f940fe0b371381d4cef1154e39ec8a50e77b
@@ -467,8 +459,6 @@ x
 Hspring-beans/src/main/java/com/zhangfd/spring/factory/BeanNameAware.java,8\3\83c7c809406fb9263e624b82bd20f1f1de3976dc
 ã
 [spring-beans/src/main/java/com/zhangfd/spring/factory/BeanCurrentlyInCreationException.java,b\0\b0fc682d015e68e69fe4aef10e15173a940902e8
-î
-dspring-beans/src/main/java/com/zhangfd/spring/factory/support/MergedBeanDefinitionPostProcessor.java,1\0\106603381ef49d37e32d1459cdd6e5d43d8d3d68
 p
 @spring-beans/src/main/java/com/zhangfd/spring/factory/Aware.java,0\f\0f8c2642a3cd409ab4560e7c03b08be33b5ddde4
 w
@@ -547,10 +537,6 @@ aspring-beans/src/main/java/com/zhangfd/spring/factory/config/ConfigurableListab
 Xspring-beans/src/main/java/com/zhangfd/spring/factory/config/BeanExpressionResolver.java,4\6\46f6589446c226db43644a219285057a2749e1a7
 â
 Yspring-beans/src/main/java/com/zhangfd/spring/factory/config/ConfigurableBeanFactory.java,6\e\6e2d025e346971280668e1418304716c5499dbd2
-y
-Ispring-beans/src/main/java/com/zhangfd/spring/factory/DisposableBean.java,4\5\4560871f59afc04e4581a88478d92f1e61fe432d
-à
-Xspring-beans/src/main/java/com/zhangfd/spring/factory/support/DisposableBeanAdapter.java,1\8\186d9131809b9fb70906643234edf8dbec2a7fe7
 á
 Wspring-beans/src/main/java/com/zhangfd/spring/factory/config/SingletonBeanRegistry.java,7\7\776ae25ab2da21e47bf1d60c8b72ba58bec52a64
 z
@@ -559,5 +545,7 @@ t
 Dspring-core/src/main/java/com/zhangfd/spring/core/AliasRegistry.java,8\2\8234fd948cef11ac5b58b1d397add820151dcc02
 x
 Hspring-beans/src/main/java/com/zhangfd/spring/factory/ObjectFactory.java,b\d\bd061bb0938c3bd32b9eea2291e9b6508ceea754
-ö
-jspring-beans/src/main/java/com/zhangfd/spring/factory/config/SmartInstantiationAwareBeanPostProcessor.java,e\d\edb7f86f0685c7635f674fec6b6e184fd51fbe15
+ï
+espring-beans/src/main/java/com/zhangfd/spring/factory/config/InstantiationAwareBeanPostProcessor.java,0\4\044f3e69158f54b87794dd605dfc7fe492de10d8
+q
+Aspring-beans/src/main/java/com/zhangfd/spring/PropertyValues.java,1\3\134a8246c6648a9845c5464b7840cf51d70508d6
