@@ -8,6 +8,7 @@ import com.zhangfd.spring.context.*;
 import com.zhangfd.spring.context.event.ApplicationEventMulticaster;
 import com.zhangfd.spring.context.event.ContextRefreshedEvent;
 import com.zhangfd.spring.context.event.SimpleApplicationEventMulticaster;
+import com.zhangfd.spring.context.expression.StandardBeanExpressionResolver;
 import com.zhangfd.spring.core.ResolvableType;
 import com.zhangfd.spring.core.annotation.AnnotationUtils;
 import com.zhangfd.spring.core.convert.ConversionService;
@@ -197,9 +198,11 @@ public abstract class AbstractApplicationContext  extends DefaultResourceLoader 
 
         // Validate that all properties marked as required are resolvable:
         // see ConfigurablePropertyResolver#setRequiredProperties
+        //校验哪些属性是必输项
         this.getEnvironment().validateRequiredProperties();
 
         // Store pre-refresh ApplicationListeners...
+        //对于提前需要存储的监听器集合，进程提前初始化
         if (this.earlyApplicationListeners == null) {
             this.earlyApplicationListeners = new LinkedHashSet<>(this.applicationListeners);
         }
@@ -247,10 +250,16 @@ public abstract class AbstractApplicationContext  extends DefaultResourceLoader 
         return getBeanFactory();
     }
 
+    /**
+     * 对DefaultListableBeanFactory对象进行赋值操作
+     * @param beanFactory
+     */
     protected void prepareBeanFactory(ConfigurableListableBeanFactory beanFactory) {
         // Tell the internal bean factory to use the context's class loader etc.
+        //设置类加载器
         beanFactory.setBeanClassLoader(getClassLoader());
-        //beanFactory.setBeanExpressionResolver(new StandardBeanExpressionResolver(beanFactory.getBeanClassLoader()));
+        //设置el表达式的解析器
+        beanFactory.setBeanExpressionResolver(new StandardBeanExpressionResolver(beanFactory.getBeanClassLoader()));
         //beanFactory.addPropertyEditorRegistrar(new ResourceEditorRegistrar(this, getEnvironment()));
 
         // Configure the bean factory with context callbacks.

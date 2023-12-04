@@ -8,8 +8,10 @@
         <outputRelativeToContentRoot value="true" />
         <module name="spring-beans" />
         <module name="spring-test" />
-        <module name="spring-jcl" />
+        <module name="spring-asm" />
         <module name="spring-core" />
+        <module name="spring-jcl" />
+        <module name="spring-expression" />
         <module name="spring-context" />
       </profile>
     </annotationProcessing>

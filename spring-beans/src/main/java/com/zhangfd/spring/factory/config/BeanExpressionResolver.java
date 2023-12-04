@@ -28,7 +28,7 @@ import com.zhangfd.spring.lang.Nullable;
  * contain a default implementation of this strategy. However,
  * {@link org.springframework.context.ApplicationContext} implementations
  * will provide expression support out of the box.
- *
+ *  专门用于解析spring el表达式的父接口库
  * @author Juergen Hoeller
  * @since 3.0
  */
