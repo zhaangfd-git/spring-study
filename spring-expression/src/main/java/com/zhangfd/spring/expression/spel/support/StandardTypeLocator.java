@@ -12,6 +12,7 @@ import java.util.List;
 
 import com.zhangfd.spring.expression.EvaluationException;
 import com.zhangfd.spring.expression.TypeLocator;
+import com.zhangfd.spring.expression.spel.SpelEvaluationException;
 import com.zhangfd.spring.expression.spel.SpelMessage;
 import com.zhangfd.spring.lang.Nullable;
 import com.zhangfd.spring.util.ClassUtils;

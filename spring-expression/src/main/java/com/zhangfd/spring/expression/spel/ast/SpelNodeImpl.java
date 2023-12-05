@@ -138,7 +138,7 @@ public abstract class SpelNodeImpl implements SpelNode, Opcodes {
         return ExpressionUtils.convertTypedValue(state.getEvaluationContext(), this.getValueInternal(state), desiredReturnType);
     }
 
-    protected ValueRef getValueRef(ExpressionState state) throws EvaluationException {
+    protected ValueRef getValueRef(ExpressionState state) throws EvaluationException, EvaluationException {
         throw new SpelEvaluationException(this.getStartPosition(), SpelMessage.NOT_ASSIGNABLE, new Object[]{this.toStringAST()});
     }
 

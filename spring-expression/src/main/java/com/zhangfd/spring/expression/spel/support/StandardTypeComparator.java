@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import com.zhangfd.spring.expression.TypeComparator;
+import com.zhangfd.spring.expression.spel.SpelEvaluationException;
 import com.zhangfd.spring.expression.spel.SpelMessage;
 import com.zhangfd.spring.lang.Nullable;
 import com.zhangfd.spring.util.NumberUtils;

@@ -5,8 +5,8 @@
 
 package com.zhangfd.spring.expression;
 
-import com.sun.istack.internal.Nullable;
 import com.zhangfd.spring.core.convert.TypeDescriptor;
+import com.zhangfd.spring.lang.Nullable;
 
 
 public interface Expression {

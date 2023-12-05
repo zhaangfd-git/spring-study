@@ -11,6 +11,7 @@ import com.zhangfd.spring.core.convert.ConversionService;
 import com.zhangfd.spring.core.convert.DefaultConversionService;
 import com.zhangfd.spring.core.convert.TypeDescriptor;
 import com.zhangfd.spring.expression.TypeConverter;
+import com.zhangfd.spring.expression.spel.SpelEvaluationException;
 import com.zhangfd.spring.expression.spel.SpelMessage;
 import com.zhangfd.spring.lang.Nullable;
 import com.zhangfd.spring.util.Assert;

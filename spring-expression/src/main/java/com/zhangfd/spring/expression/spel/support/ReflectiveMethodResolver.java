@@ -21,6 +21,7 @@ import com.zhangfd.spring.core.BridgeMethodResolver;
 import com.zhangfd.spring.core.MethodParameter;
 import com.zhangfd.spring.core.convert.TypeDescriptor;
 import com.zhangfd.spring.expression.*;
+import com.zhangfd.spring.expression.spel.SpelEvaluationException;
 import com.zhangfd.spring.expression.spel.SpelMessage;
 import com.zhangfd.spring.lang.Nullable;
 import com.zhangfd.spring.util.ReflectionUtils;

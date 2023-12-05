@@ -5,7 +5,8 @@
 
 package com.zhangfd.spring.expression;
 
-import com.sun.istack.internal.Nullable;
+
+import com.zhangfd.spring.lang.Nullable;
 
 import java.util.List;
 
