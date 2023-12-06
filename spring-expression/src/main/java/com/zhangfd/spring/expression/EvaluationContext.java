@@ -10,6 +10,9 @@ import com.zhangfd.spring.lang.Nullable;
 
 import java.util.List;
 
+/**
+ * 解析属性、方法、字段，并帮助执行类型转换
+ */
 public interface EvaluationContext {
     TypedValue getRootObject();
 
