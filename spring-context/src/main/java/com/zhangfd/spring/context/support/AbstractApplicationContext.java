@@ -4,6 +4,7 @@ import com.zhangfd.jcl.Log;
 import com.zhangfd.jcl.LogFactory;
 import com.zhangfd.spring.BeansException;
 import com.zhangfd.spring.beans.CachedIntrospectionResults;
+import com.zhangfd.spring.beans.support.ResourceEditorRegistrar;
 import com.zhangfd.spring.context.*;
 import com.zhangfd.spring.context.event.ApplicationEventMulticaster;
 import com.zhangfd.spring.context.event.ContextRefreshedEvent;
@@ -258,9 +259,10 @@ public abstract class AbstractApplicationContext  extends DefaultResourceLoader 
         // Tell the internal bean factory to use the context's class loader etc.
         //设置类加载器
         beanFactory.setBeanClassLoader(getClassLoader());
-        //设置el表达式的解析器
+        //设置el表达式的解析器,最简单的场景是解析#{XXX}为XXX
         beanFactory.setBeanExpressionResolver(new StandardBeanExpressionResolver(beanFactory.getBeanClassLoader()));
-        //beanFactory.addPropertyEditorRegistrar(new ResourceEditorRegistrar(this, getEnvironment()));
+        //添加类型转换器
+        beanFactory.addPropertyEditorRegistrar(new ResourceEditorRegistrar(this, getEnvironment()));
 
         // Configure the bean factory with context callbacks.
        /* beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));

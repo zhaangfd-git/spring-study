@@ -12,8 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *//*
-
+ */
 
 package com.zhangfd.spring.beans.propertyeditors;
 
@@ -21,12 +20,12 @@ import java.beans.PropertyEditorSupport;
 import java.io.IOException;
 
 import com.zhangfd.spring.core.io.Resource;
+import com.zhangfd.spring.core.io.ResourceEditor;
 import com.zhangfd.spring.util.Assert;
 import org.xml.sax.InputSource;
 
 
 
-*/
 /**
  * Editor for {@code org.xml.sax.InputSource}, converting from a
  * Spring resource location String to a SAX InputSource object.
@@ -41,30 +40,25 @@ import org.xml.sax.InputSource;
  * @see org.springframework.core.io.ResourceLoader
  * @see URLEditor
  * @see FileEditor
- *//*
-
+ */
 public class InputSourceEditor extends PropertyEditorSupport {
 
 	private final ResourceEditor resourceEditor;
 
 
-	*/
-/**
+	/**
 	 * Create a new InputSourceEditor,
 	 * using the default ResourceEditor underneath.
-	 *//*
-
+	 */
 	public InputSourceEditor() {
 		this.resourceEditor = new ResourceEditor();
 	}
 
-	*/
-/**
+	/**
 	 * Create a new InputSourceEditor,
 	 * using the given ResourceEditor underneath.
 	 * @param resourceEditor the ResourceEditor to use
-	 *//*
-
+	 */
 	public InputSourceEditor(ResourceEditor resourceEditor) {
 		Assert.notNull(resourceEditor, "ResourceEditor must not be null");
 		this.resourceEditor = resourceEditor;
@@ -91,4 +85,3 @@ public class InputSourceEditor extends PropertyEditorSupport {
 	}
 
 }
-*/
