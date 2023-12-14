@@ -39,11 +39,8 @@ import com.zhangfd.spring.factory.config.BeanPostProcessor;
 public interface MergedBeanDefinitionPostProcessor extends BeanPostProcessor {
 
 	/**
-	 * Post-process the given merged bean definition for the specified bean.
-	 * @param beanDefinition the merged bean definition for the bean
-	 * @param beanType the actual type of the managed bean instance
-	 * @param beanName the name of the bean
-	 * @see AbstractAutowireCapableBeanFactory#applyMergedBeanDefinitionPostProcessors
+	 * 实现类可获取指定类的RootBeanDefinition beanDefinition，
+	 * 如我们想知道一个spring初始化的对象是否是单例的，如ApplicationListenerDetector是实现类的该方法就是干这事的
 	 */
 	void postProcessMergedBeanDefinition(RootBeanDefinition beanDefinition, Class<?> beanType, String beanName);
 

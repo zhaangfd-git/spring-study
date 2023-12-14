@@ -281,7 +281,7 @@ public abstract class AbstractApplicationContext  extends DefaultResourceLoader 
         beanFactory.registerResolvableDependency(ApplicationContext.class, this);
 
         // Register early post-processor for detecting inner beans as ApplicationListeners.
-       // beanFactory.addBeanPostProcessor(new ApplicationListenerDetector(this));
+       beanFactory.addBeanPostProcessor(new ApplicationListenerDetector(this));
 
         // Detect a LoadTimeWeaver and prepare for weaving, if found.
         if (beanFactory.containsBean(LOAD_TIME_WEAVER_BEAN_NAME)) {
@@ -334,6 +334,15 @@ public abstract class AbstractApplicationContext  extends DefaultResourceLoader 
                         "[" + this.applicationEventMulticaster.getClass().getSimpleName() + "]");
             }
         }
+    }
+
+    @Override
+    public void addApplicationListener(ApplicationListener<?> listener) {
+        Assert.notNull(listener, "ApplicationListener must not be null");
+        if (this.applicationEventMulticaster != null) {
+            this.applicationEventMulticaster.addApplicationListener(listener);
+        }
+        this.applicationListeners.add(listener);
     }
 
     protected void registerListeners() {

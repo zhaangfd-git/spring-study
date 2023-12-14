@@ -119,7 +119,7 @@ public interface ConfigurableApplicationContext extends ApplicationContext, Life
      * @see org.springframework.context.event.ContextRefreshedEvent
      * @see org.springframework.context.event.ContextClosedEvent
      */
-    //void addApplicationListener(ApplicationListener<?> listener);
+    void addApplicationListener(ApplicationListener<?> listener);
 
     /**
      * Specify the ClassLoader to load class path resources and bean classes with.
