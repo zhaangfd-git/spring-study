@@ -10,6 +10,8 @@ import com.zhangfd.spring.context.event.ApplicationEventMulticaster;
 import com.zhangfd.spring.context.event.ContextRefreshedEvent;
 import com.zhangfd.spring.context.event.SimpleApplicationEventMulticaster;
 import com.zhangfd.spring.context.expression.StandardBeanExpressionResolver;
+import com.zhangfd.spring.context.weaving.LoadTimeWeaverAware;
+import com.zhangfd.spring.context.weaving.LoadTimeWeaverAwareProcessor;
 import com.zhangfd.spring.core.ResolvableType;
 import com.zhangfd.spring.core.annotation.AnnotationUtils;
 import com.zhangfd.spring.core.convert.ConversionService;
@@ -285,9 +287,9 @@ public abstract class AbstractApplicationContext  extends DefaultResourceLoader 
 
         // Detect a LoadTimeWeaver and prepare for weaving, if found.
         if (beanFactory.containsBean(LOAD_TIME_WEAVER_BEAN_NAME)) {
-          //  beanFactory.addBeanPostProcessor(new LoadTimeWeaverAwareProcessor(beanFactory));
+            beanFactory.addBeanPostProcessor(new LoadTimeWeaverAwareProcessor(beanFactory));
             // Set a temporary ClassLoader for type matching.
-        //    beanFactory.setTempClassLoader(new ContextTypeMatchClassLoader(beanFactory.getBeanClassLoader()));
+           beanFactory.setTempClassLoader(new ContextTypeMatchClassLoader(beanFactory.getBeanClassLoader()));
         }
 
         // Register default environment beans.
@@ -308,8 +310,8 @@ public abstract class AbstractApplicationContext  extends DefaultResourceLoader 
         // Detect a LoadTimeWeaver and prepare for weaving, if found in the meantime
         // (e.g. through an @Bean method registered by ConfigurationClassPostProcessor)
         if (beanFactory.getTempClassLoader() == null && beanFactory.containsBean(LOAD_TIME_WEAVER_BEAN_NAME)) {
-            //beanFactory.addBeanPostProcessor(new LoadTimeWeaverAwareProcessor(beanFactory));
-           // beanFactory.setTempClassLoader(new ContextTypeMatchClassLoader(beanFactory.getBeanClassLoader()));
+            beanFactory.addBeanPostProcessor(new LoadTimeWeaverAwareProcessor(beanFactory));
+           beanFactory.setTempClassLoader(new ContextTypeMatchClassLoader(beanFactory.getBeanClassLoader()));
         }
     }
 
@@ -401,10 +403,10 @@ public abstract class AbstractApplicationContext  extends DefaultResourceLoader 
         }
 
         // Initialize LoadTimeWeaverAware beans early to allow for registering their transformers early.
-       /* String[] weaverAwareNames = beanFactory.getBeanNamesForType(LoadTimeWeaverAware.class, false, false);
+        String[] weaverAwareNames = beanFactory.getBeanNamesForType(LoadTimeWeaverAware.class, false, false);
         for (String weaverAwareName : weaverAwareNames) {
             getBean(weaverAwareName);
-        }*/
+        }
 
         // Stop using the temporary ClassLoader for type matching.
         beanFactory.setTempClassLoader(null);
@@ -430,7 +432,7 @@ public abstract class AbstractApplicationContext  extends DefaultResourceLoader 
         publishEvent(new ContextRefreshedEvent(this));
 
         // Participate in LiveBeansView MBean, if active.
-       // LiveBeansView.registerApplicationContext(this);
+        LiveBeansView.registerApplicationContext(this);
     }
 
     @Override
