@@ -30,13 +30,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Special variant of an overriding ClassLoader, used for temporary type
- * matching in {@link AbstractApplicationContext}. Redefines classes from
+ * matching in {@link AbstractApplicationContext001}. Redefines classes from
  * a cached byte array for every {@code loadClass} call in order to
  * pick up recently loaded types in the parent ClassLoader.
  *
  * @author Juergen Hoeller
  * @since 2.5
- * @see AbstractApplicationContext
+ * @see AbstractApplicationContext001
  * @see org.springframework.beans.factory.config.ConfigurableBeanFactory#setTempClassLoader
  */
 class ContextTypeMatchClassLoader extends DecoratingClassLoader implements SmartClassLoader {

@@ -84,7 +84,7 @@ public interface ConfigurableApplicationContext extends ApplicationContext, Life
      * @param parent the parent context
      * @see org.springframework.web.context.ConfigurableWebApplicationContext
      */
-    void setParent(@Nullable ApplicationContext parent);
+     void setParent(@Nullable ApplicationContext parent);
 
     /**
      * Set the {@code Environment} for this application context.

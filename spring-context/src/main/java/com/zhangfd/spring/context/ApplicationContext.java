@@ -1,6 +1,7 @@
 package com.zhangfd.spring.context;
 
 import com.zhangfd.spring.core.env.EnvironmentCapable;
+import com.zhangfd.spring.core.io.support.ResourcePatternResolver;
 import com.zhangfd.spring.factory.ListableBeanFactory;
 import com.zhangfd.spring.factory.config.AutowireCapableBeanFactory;
 import com.zhangfd.spring.factory.support.HierarchicalBeanFactory;
@@ -12,7 +13,8 @@ import com.zhangfd.spring.lang.Nullable;
  * @version: 1.0
  * @describe: 定义容器
  */
-public interface ApplicationContext extends EnvironmentCapable, ListableBeanFactory, HierarchicalBeanFactory,ApplicationEventPublisher {
+public interface ApplicationContext extends EnvironmentCapable, ListableBeanFactory,
+        HierarchicalBeanFactory,ApplicationEventPublisher,MessageSource, ResourcePatternResolver {
 
 
     /**
