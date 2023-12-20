@@ -631,12 +631,19 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		}
 
 		// Register default environment beans.
+		//这里是自动往spring容器放入bean，beanName=environment，对应的使用对象是StandardEnvironment对象
+		//所以我们在定义一个类的使用，就可使用@Autowire注解 Environment environment;
 		if (!beanFactory.containsLocalBean(ENVIRONMENT_BEAN_NAME)) {
 			beanFactory.registerSingleton(ENVIRONMENT_BEAN_NAME, getEnvironment());
 		}
+
+		//这里是自动往spring容器放入bean，beanName=systemProperties，对应的使用对象是Map对象
+		//所以我们在定义一个类的使用，就可使用@Autowire注解 Map systemProperties;从而获取系统变量值
 		if (!beanFactory.containsLocalBean(SYSTEM_PROPERTIES_BEAN_NAME)) {
 			beanFactory.registerSingleton(SYSTEM_PROPERTIES_BEAN_NAME, getEnvironment().getSystemProperties());
 		}
+		//这里是自动往spring容器放入bean，beanName=systemProperties，对应的使用对象是Map对象
+		//所以我们在定义一个类的使用，就可使用@Autowire注解 Map systemProperties;从而获取环境信息
 		if (!beanFactory.containsLocalBean(SYSTEM_ENVIRONMENT_BEAN_NAME)) {
 			beanFactory.registerSingleton(SYSTEM_ENVIRONMENT_BEAN_NAME, getEnvironment().getSystemEnvironment());
 		}
