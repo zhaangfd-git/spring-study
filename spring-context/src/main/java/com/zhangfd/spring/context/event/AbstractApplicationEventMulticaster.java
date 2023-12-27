@@ -105,12 +105,13 @@ public abstract class AbstractApplicationEventMulticaster
 		synchronized (this.defaultRetriever) {
 			// Explicitly remove target for a proxy, if registered already,
 			// in order to avoid double invocations of the same listener.
-			/*Object singletonTarget = AopProxyUtils.getSingletonTarget(listener);
+			//Object singletonTarget = AopProxyUtils.getSingletonTarget(listener);
+			Object singletonTarget = null;
 			if (singletonTarget instanceof ApplicationListener) {
 				this.defaultRetriever.applicationListeners.remove(singletonTarget);
 			}
 			this.defaultRetriever.applicationListeners.add(listener);
-			this.retrieverCache.clear();*/
+			this.retrieverCache.clear();
 		}
 	}
 

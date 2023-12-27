@@ -470,7 +470,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
-				//收集所有的BeanPostProcessor实现类
+				//收集所有的BeanPostProcessor实现类，注册到beanFactory里
 				registerBeanPostProcessors(beanFactory);
 
 				// Initialize message source for this context.
@@ -478,6 +478,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				initMessageSource();
 
 				// Initialize event multicaster for this context.
+				//创建SimpleApplicationEventMulticaster对象到spring容器
 				initApplicationEventMulticaster();
 
 				// Initialize other special beans in specific context subclasses.
@@ -726,6 +727,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * Initialize the ApplicationEventMulticaster.
 	 * Uses SimpleApplicationEventMulticaster if none defined in the context.
 	 * @see org.springframework.context.event.SimpleApplicationEventMulticaster
+	 * 把beanName=applicationEventMulticaster的SimpleApplicationEventMulticaster对象注入beanFactory
+	 * 若容器已经存在beanName=applicationEventMulticaster的对象，则使用用户自定义的ApplicationEventMulticaster实现类，
+	 * 一般不建议自己定义ApplicationEventMulticaster的实现类
 	 */
 	protected void initApplicationEventMulticaster() {
 		ConfigurableListableBeanFactory beanFactory = getBeanFactory();
