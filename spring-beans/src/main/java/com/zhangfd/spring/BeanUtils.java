@@ -2,6 +2,7 @@ package com.zhangfd.spring;
 
 import com.zhangfd.jcl.Log;
 import com.zhangfd.jcl.LogFactory;
+import com.zhangfd.spring.beans.CachedIntrospectionResults;
 import com.zhangfd.spring.beans.GenericTypeAwarePropertyDescriptor;
 import com.zhangfd.spring.core.KotlinDetector;
 import com.zhangfd.spring.core.MethodParameter;
@@ -202,6 +203,21 @@ public abstract class BeanUtils {
         }
     }
 
+    @Nullable
+    public static PropertyDescriptor findPropertyForMethod(Method method, Class<?> clazz) throws BeansException {
+        Assert.notNull(method, "Method must not be null");
+        PropertyDescriptor[] pds = getPropertyDescriptors(clazz);
+        for (PropertyDescriptor pd : pds) {
+            if (method.equals(pd.getReadMethod()) || method.equals(pd.getWriteMethod())) {
+                return pd;
+            }
+        }
+        return null;
+    }
+
+    public static PropertyDescriptor[] getPropertyDescriptors(Class<?> clazz) throws BeansException {
+        return CachedIntrospectionResults.forClass(clazz).getPropertyDescriptors();
+    }
 
     public static void main(String[] args) throws Exception {
         Constructor<?> constructorToUse;

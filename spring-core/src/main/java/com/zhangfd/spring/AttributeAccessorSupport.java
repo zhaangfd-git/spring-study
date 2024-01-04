@@ -16,6 +16,7 @@
 
 package com.zhangfd.spring;
 
+import com.zhangfd.spring.core.AttributeAccessor;
 import com.zhangfd.spring.lang.Nullable;
 import com.zhangfd.spring.util.Assert;
 import com.zhangfd.spring.util.StringUtils;

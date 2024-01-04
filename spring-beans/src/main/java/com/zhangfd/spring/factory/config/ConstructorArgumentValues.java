@@ -15,6 +15,28 @@ public class ConstructorArgumentValues {
 
     private final List<ValueHolder> genericArgumentValues = new ArrayList<>();
 
+    public ConstructorArgumentValues() {
+    }
+
+    /**
+     * Deep copy constructor.
+     * @param original the ConstructorArgumentValues to copy
+     */
+    public ConstructorArgumentValues(ConstructorArgumentValues original) {
+        addArgumentValues(original);
+    }
+
+
+    public void addArgumentValues(@Nullable ConstructorArgumentValues other) {
+        if (other != null) {
+            other.indexedArgumentValues.forEach(
+                    (index, argValue) -> addOrMergeIndexedArgumentValue(index, argValue.copy())
+            );
+            other.genericArgumentValues.stream()
+                    .filter(valueHolder -> !this.genericArgumentValues.contains(valueHolder))
+                    .forEach(valueHolder -> addOrMergeGenericArgumentValue(valueHolder.copy()));
+        }
+    }
 
     public Map<Integer, ValueHolder> getIndexedArgumentValues() {
         return Collections.unmodifiableMap(this.indexedArgumentValues);

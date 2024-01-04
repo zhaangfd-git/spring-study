@@ -27,6 +27,7 @@ import com.zhangfd.spring.core.annotation.AnnotationAwareOrderComparator;
 import com.zhangfd.spring.core.type.AnnotatedTypeMetadata;
 import com.zhangfd.spring.core.type.AnnotationMetadata;
 import com.zhangfd.spring.factory.annotation.AnnotatedBeanDefinition;
+import com.zhangfd.spring.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import com.zhangfd.spring.factory.config.BeanDefinition;
 import com.zhangfd.spring.factory.config.BeanDefinitionHolder;
 import com.zhangfd.spring.factory.support.BeanDefinitionRegistry;
@@ -34,7 +35,6 @@ import com.zhangfd.spring.factory.support.DefaultListableBeanFactory;
 import com.zhangfd.spring.factory.support.RootBeanDefinition;
 import com.zhangfd.spring.lang.Nullable;
 import com.zhangfd.spring.util.ClassUtils;
-import kotlin.Lazy;
 
 
 /**
@@ -193,17 +193,17 @@ public abstract class AnnotationConfigUtils {
 			beanDefs.add(registerPostProcessor(registry, def, PERSISTENCE_ANNOTATION_PROCESSOR_BEAN_NAME));
 		}
 
-		if (!registry.containsBeanDefinition(EVENT_LISTENER_PROCESSOR_BEAN_NAME)) {
+		/*if (!registry.containsBeanDefinition(EVENT_LISTENER_PROCESSOR_BEAN_NAME)) {
 			RootBeanDefinition def = new RootBeanDefinition(EventListenerMethodProcessor.class);
 			def.setSource(source);
 			beanDefs.add(registerPostProcessor(registry, def, EVENT_LISTENER_PROCESSOR_BEAN_NAME));
-		}
+		}*/
 
-		if (!registry.containsBeanDefinition(EVENT_LISTENER_FACTORY_BEAN_NAME)) {
+		/*if (!registry.containsBeanDefinition(EVENT_LISTENER_FACTORY_BEAN_NAME)) {
 			RootBeanDefinition def = new RootBeanDefinition(DefaultEventListenerFactory.class);
 			def.setSource(source);
 			beanDefs.add(registerPostProcessor(registry, def, EVENT_LISTENER_FACTORY_BEAN_NAME));
-		}
+		}*/
 
 		return beanDefs;
 	}

@@ -501,6 +501,8 @@ public class DefaultSingletonBeanRegistry  extends SimpleAliasRegistry implement
         return (!this.inCreationCheckExclusions.contains(beanName) && isActuallyInCreation(beanName));
     }
 
+
+
     public void registerDependentBean(String beanName, String dependentBeanName) {
         String canonicalName = canonicalName(beanName);
 

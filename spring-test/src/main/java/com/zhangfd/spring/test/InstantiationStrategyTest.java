@@ -1,19 +1,12 @@
 package com.zhangfd.spring.test;
 
 import com.zhangfd.spring.BeanUtils;
-import com.zhangfd.spring.core.ResolvableType;
 import com.zhangfd.spring.factory.support.RootBeanDefinition;
 import com.zhangfd.spring.factory.support.SimpleInstantiationStrategy;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.security.AccessController;
-import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
-import java.util.HashMap;
-import java.util.List;
 
 public class InstantiationStrategyTest {
 

@@ -134,4 +134,6 @@ public interface ConfigurableBeanFactory  extends HierarchicalBeanFactory, Singl
 
     TypeConverter getTypeConverter();
     void destroySingletons();
+    void registerDependentBean(String beanName, String dependentBeanName);
+
 }
